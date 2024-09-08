@@ -1,0 +1,50 @@
+{
+    "name": "hesabro/automation",
+    "version": "1.0.0",
+    "description": "Hesabro automation package",
+    "type": "yii2-extension",
+    "license": "BSD-3-Clause",
+    "autoload": {
+        "psr-4": {
+            "Hesabro\\Automation\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Nader Bahadori",
+            "email": "nader.bahadorii@gmail.com"
+        },
+        {
+            "name": "Moslem Tayari",
+            "email": "avapardazmota@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=8.0",
+        "yiisoft/yii2": "~2.0.14",
+        "yiisoft/yii2-bootstrap4": "^2.0",
+        "hesabro/helpers": "^1.0.0"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^6.4"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        },
+        {
+            "type": "vcs",
+            "url": "git@git.abrsa.ir:hesabro/backend-modules/hesabro-helpers.git"
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
+        }
+    },
+    "extra": {
+        "bootstrap": "hesabro\\changelog\\Bootstrap"
+    }
+}
