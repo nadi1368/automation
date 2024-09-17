@@ -1,5 +1,6 @@
 <?php
 
+use hesabro\automation\Module;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 

@@ -3,7 +3,7 @@
 use hesabro\automation\models\AuPrintLayout;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
-use common\widgets\CKEditorWidget;
+use hesabro\helpers\widgets\CKEditorWidget;
 
 /* @var $this yii\web\View */
 /* @var $model hesabro\automation\models\AuPrintLayout */

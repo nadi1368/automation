@@ -2,6 +2,7 @@
 
 namespace hesabro\automation\controllers;
 
+use hesabro\automation\events\AuLetterInternalEvent;
 use hesabro\automation\Module;
 use hesabro\helpers\traits\AjaxValidationTrait;
 use Yii;
@@ -105,16 +106,18 @@ class AuLetterInternalController extends AuLetterController
      */
     public function actionCreate()
     {
-        $model = new AuLetter(['type' => AuLetter::TYPE_INTERNAL, 'date' => Yii::$app->jdate->date("Y/m/d")]);
+        $model = new AuLetter(['type' => AuLetter::TYPE_INTERNAL, 'date' => Yii::$app->jdf::jdate("Y/m/d")]);
         $model->setScenario(AuLetter::SCENARIO_CREATE_INTERNAL);
         if ($this->request->isPost) {
             if ($model->load(Yii::$app->request->post()) && $model->validate()) {
                 $transaction = Yii::$app->db->beginTransaction();
+                $this->trigger(self::EVENT_BEFORE_CREATE, AuLetterInternalEvent::create($model));
                 try {
                     $flag = $model->save(false);
                     $flag = $flag && $model->createRecipientsInternal();
                     $flag = $flag && $model->createCCRecipientsInternal();
                     if ($flag) {
+                        $this->trigger(self::EVENT_AFTER_CREATE, AuLetterInternalEvent::create($model));
                         $transaction->commit();
                         $this->flash('success', Module::t('module', "Item Created"));
                         return $this->redirect(['view', 'id' => $model->id, 'slave_id' => $model->slave_id]);
@@ -158,11 +161,13 @@ class AuLetterInternalController extends AuLetterController
         if ($this->request->isPost) {
             if ($model->load(Yii::$app->request->post()) && $model->validate()) {
                 $transaction = Yii::$app->db->beginTransaction();
+                $this->trigger(self::EVENT_BEFORE_UPDATE, AuLetterInternalEvent::create($model));
                 try {
                     $flag = $model->save(false);
                     $flag = $flag && $model->updateRecipientsInternal($old_recipients);
                     $flag = $flag && $model->updateCCRecipientsInternal($old_cc_recipients);
                     if ($flag) {
+                        $this->trigger(self::EVENT_AFTER_UPDATE, AuLetterInternalEvent::create($model));
                         $transaction->commit();
                         $this->flash('success', Module::t('module', "Item Created"));
                         return $this->redirect(['view', 'id' => $model->id]);

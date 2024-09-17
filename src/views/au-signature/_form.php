@@ -1,6 +1,6 @@
 <?php
 
-use backend\models\User;
+use hesabro\automation\Module;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
@@ -11,6 +11,8 @@ use yii\web\JsExpression;
 /* @var $this yii\web\View */
 /* @var $model hesabro\automation\models\AuSignature */
 /* @var $form yii\bootstrap4\ActiveForm */
+
+$classUser = Module::getInstance()->user;
 ?>
 
 <div class="au-signature-form">
@@ -30,7 +32,7 @@ use yii\web\JsExpression;
 
 
             <div class="col-md-6">
-                <?= $form->field($model, 'user_id')->widget(Select2::classname(), [
+                <?= $form->field($model, 'user_id')->widget(Select2::class, [
                     'initValueText' => $model->user_id ? $model->user->fullName : '', // set the initial display text
                     'options' => ['placeholder' => Module::t('module', "Search"), 'dir' => 'rtl'],
                     'pluginOptions' => [
@@ -59,7 +61,7 @@ use yii\web\JsExpression;
 
             <div class="col-md-12">
                 <?= $form->field($model, 'users_other')->widget(Select2::classname(), [
-                    'initValueText' => $model->users_other && is_array($model->users_other) ? ArrayHelper::map(User::find()->andWhere(['IN', 'id', $model->users_other])->all(), "id", "fullName") : [],
+                    'initValueText' => $model->users_other && is_array($model->users_other) ? ArrayHelper::map($classUser::find()->andWhere(['IN', 'id', $model->users_other])->all(), "id", "fullName") : [],
                     'options' => ['placeholder' => Module::t('module', "Search"), 'dir' => 'rtl', 'multiple' => true],
                     'pluginOptions' => [
                         'allowClear' => true,

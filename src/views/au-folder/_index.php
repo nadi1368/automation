@@ -1,6 +1,6 @@
 <?php
 
-use common\widgets\TableView;
+use hesabro\helpers\widgets\TableView;
 use hesabro\automation\models\AuFolder;
 
 /* @var $this yii\web\View */
@@ -17,7 +17,7 @@ use hesabro\automation\models\AuFolder;
                 [
                     'attribute' => 'created_at',
                     'value' => function ($model) {
-                        return '<span title="بروز رسانی شده در ' . Yii::$app->jdate->date("Y/m/d  H:i", $model->updated_at) . '">' . Yii::$app->jdate->date("Y/m/d  H:i", $model->created_at) . '</span>';
+                        return '<span title="بروز رسانی شده در ' . Yii::$app->jdf::jdate("Y/m/d  H:i", $model->updated_at) . '">' . Yii::$app->jdf::jdate("Y/m/d  H:i", $model->created_at) . '</span>';
                     },
                     'format' => 'raw'
                 ],

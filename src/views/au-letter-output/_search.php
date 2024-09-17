@@ -2,6 +2,7 @@
 
 use hesabro\automation\models\AuFolder;
 use hesabro\automation\models\AuLetter;
+use hesabro\automation\Module;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;

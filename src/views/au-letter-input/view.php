@@ -1,7 +1,8 @@
 <?php
 
 use hesabro\automation\models\AuLetter;
-use common\widgets\TableView;
+use hesabro\helpers\widgets\TableView;
+use hesabro\automation\Module;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 
@@ -62,7 +63,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'created_at',
                     'value' => function (AuLetter $model) {
-                        return '<span title="بروز رسانی شده در ' . Yii::$app->jdate->date("Y/m/d  H:i", $model->updated_at) . '">' . Yii::$app->jdate->date("Y/m/d  H:i", $model->created_at) . '</span>';
+                        return '<span title="بروز رسانی شده در ' . Yii::$app->jdf::jdate("Y/m/d  H:i", $model->updated_at) . '">' . Yii::$app->jdf::jdate("Y/m/d  H:i", $model->created_at) . '</span>';
                     },
                     'format' => 'raw'
                 ],

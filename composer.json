@@ -40,16 +40,8 @@
             "url": "https://asset-packagist.org"
         },
         {
-            "type": "vcs",
-            "url": "git@git.abrsa.ir:hesabro/backend-modules/hesabro-helpers.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@git.abrsa.ir:hesabro/backend-modules/Hesabro-ChangeLog.git"
-        },
-        {
-            "type": "vcs",
-            "url": "git@git.abrsa.ir:hesabro/backend-modules/hesabro-log-tracer.git"
+            "type": "path",
+            "url": "/home/ava/Workspace/Packages/helpers"
         }
     ],
     "config": {

@@ -1,5 +1,6 @@
 <?php
 
+use hesabro\automation\Module;
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */

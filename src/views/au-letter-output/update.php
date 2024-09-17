@@ -1,7 +1,6 @@
 <?php
 
-use hesabro\automation\models\AuLetter;
-use yii\helpers\Html;
+use hesabro\automation\Module;
 
 /* @var $this yii\web\View */
 /* @var $model hesabro\automation\models\AuLetter */

@@ -1,10 +1,10 @@
 <?php
 
 use hesabro\automation\models\AuPrintLayout;
-use common\components\Helper;
+use hesabro\automation\Module;
 use yii\bootstrap4\ButtonDropdown;
 use yii\helpers\Html;
-use common\widgets\grid\GridView;
+use hesabro\helpers\widgets\grid\GridView;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'status',
                     'value' => function (AuPrintLayout $model) {
-                        return Helper::itemAlias('YesOrNoIcon', $model->status);
+                        return Yii::$app->helper->itemAlias('YesOrNoIcon', $model->status);
                     },
                     'format' => 'raw',
                 ],

@@ -2,6 +2,7 @@
 
 namespace hesabro\automation\controllers;
 
+use hesabro\automation\events\AuSignatureEvent;
 use hesabro\automation\Module;
 use Yii;
 use hesabro\automation\models\AuSignature;
@@ -17,6 +18,26 @@ use yii\web\Response;
  */
 class AuSignatureController extends Controller
 {
+    public const EVENT_BEFORE_CREATE = 'beforeCreate';
+
+    public const EVENT_AFTER_CREATE = 'afterCreate';
+
+    public const EVENT_BEFORE_UPDATE = 'beforeUpdate';
+
+    public const EVENT_AFTER_UPDATE = 'afterUpdate';
+
+    public const EVENT_BEFORE_DELETE = 'beforeDelete';
+
+    public const EVENT_AFTER_DELETE = 'afterDelete';
+
+    public const EVENT_BEFORE_SET_ACTIVE = 'beforeSetActive';
+
+    public const EVENT_AFTER_SET_ACTIVE = 'afterSetActive';
+
+    public const EVENT_BEFORE_SET_INACTIVE = 'beforeSetInactive';
+
+    public const EVENT_AFTER_SET_INACTIVE = 'afterSetInactive';
+
     /**
      * {@inheritdoc}
      */
@@ -90,8 +111,10 @@ class AuSignatureController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             $transaction = \Yii::$app->db->beginTransaction();
             try {
+                $this->trigger(self::EVENT_BEFORE_CREATE, AuSignatureEvent::create($model));
                 $flag = $model->save();
                 if ($flag) {
+                    $this->trigger(self::EVENT_AFTER_CREATE, AuSignatureEvent::create($model));
                     $transaction->commit();
                     $this->flash("success", Module::t('module', 'Item Created'));
                     return $this->redirect(['index']);
@@ -131,8 +154,10 @@ class AuSignatureController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             $transaction = \Yii::$app->db->beginTransaction();
             try {
+                $this->trigger(self::EVENT_BEFORE_UPDATE, AuSignatureEvent::create($model));
                 $flag = $model->save();
                 if ($flag) {
+                    $this->trigger(self::EVENT_AFTER_UPDATE, AuSignatureEvent::create($model));
                     $transaction->commit();
                     $this->flash("success", Module::t('module', 'Item Updated'));
                     return $this->redirect(['index']);
@@ -164,8 +189,10 @@ class AuSignatureController extends Controller
         if ($model->canDelete()) {
             $transaction = \Yii::$app->db->beginTransaction();
             try {
+                $this->trigger(self::EVENT_BEFORE_DELETE, AuSignatureEvent::create($model));
                 $flag = $model->softDelete();
                 if ($flag) {
+                    $this->trigger(self::EVENT_AFTER_DELETE, AuSignatureEvent::create($model));
                     $transaction->commit();
                     $result = [
                         'status' => true,
@@ -207,9 +234,11 @@ class AuSignatureController extends Controller
         if ($model->canActive()) {
             $transaction = \Yii::$app->db->beginTransaction();
             try {
+                $this->trigger(self::EVENT_BEFORE_SET_ACTIVE, AuSignatureEvent::create($model));
                 $model->status = AuSignature::STATUS_ACTIVE;
                 $flag = $model->save(false);
                 if ($flag) {
+                    $this->trigger(self::EVENT_AFTER_SET_ACTIVE, AuSignatureEvent::create($model));
                     $transaction->commit();
                     $result = [
                         'status' => true,
@@ -250,9 +279,11 @@ class AuSignatureController extends Controller
         if ($model->canInActive()) {
             $transaction = \Yii::$app->db->beginTransaction();
             try {
+                $this->trigger(self::EVENT_BEFORE_SET_INACTIVE, AuSignatureEvent::create($model));
                 $model->status = AuSignature::STATUS_INACTIVE;
                 $flag = $model->save(false);
                 if ($flag) {
+                    $this->trigger(self::EVENT_AFTER_SET_INACTIVE, AuSignatureEvent::create($model));
                     $transaction->commit();
                     $result = [
                         'status' => true,

@@ -1,10 +1,11 @@
 <?php
 
-
-use common\models\User;
+use hesabro\automation\Module;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
+
+$userClass = Module::getInstance()->user;
 
 /* @var $this yii\web\View */
 /* @var $modelReference hesabro\automation\models\FormLetterReference */
@@ -18,7 +19,7 @@ use yii\bootstrap4\ActiveForm;
         <div class="row">
             <div class="col-md-12">
                 <?= $form->field($modelReference, 'user_id')->widget(Select2::class, [
-                    'data' => User::getUserWithRoles(['employee']),
+                    'data' => $userClass::getUserWithRoles(['employee']),
                     'options' => [
                         'dir' => 'rtl',
                         'placeholder' => '',

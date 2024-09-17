@@ -18,7 +18,7 @@ use hesabro\automation\models\AuLetterActivity;
                                 <div class="timeline-heading">
                                     <h4 class="timeline-title"><?= $activity->creator->fullName ?></h4>
                                     <p><small class="text-muted">
-                                            <i class="fa fa-clock-o"></i> <?= Yii::$app->jdate->date("l d F Y H:i:s", $activity->created_at) ?>
+                                            <i class="fa fa-clock-o"></i> <?= Yii::$app->jdf::jdate("l d F Y H:i:s", $activity->created_at) ?>
                                         </small></p>
                                 </div>
                                 <div class="timeline-body">

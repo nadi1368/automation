@@ -2,6 +2,7 @@
 
 use hesabro\automation\models\AuPrintLayout;
 use hesabro\automation\models\AuSignature;
+use hesabro\automation\Module;
 use yii\bootstrap4\ButtonDropdown;
 use yii\helpers\Html;
 use yii\helpers\Url;

@@ -2,14 +2,12 @@
 
 use hesabro\automation\models\AuLetter;
 use hesabro\automation\models\AuUser;
-use common\models\User;
+use hesabro\automation\Module;
 use kartik\select2\Select2;
-use skeeks\yii2\ckeditor\CKEditorPresets;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
-use common\widgets\CKEditorWidget;
-use backend\modules\master\models\Client;
+use hesabro\helpers\widgets\CKEditorWidget;
 use hesabro\automation\models\AuFolder;
 use yii\helpers\Url;
 use yii\web\JsExpression;
@@ -19,6 +17,9 @@ use yii\widgets\Pjax;
 /* @var $this yii\web\View */
 /* @var $model hesabro\automation\models\AuLetter */
 /* @var $form yii\bootstrap4\ActiveForm */
+
+$clientClass = Module::getInstance()->client;
+$userClass = Module::getInstance()->user;
 ?>
 
 <div class="au-letter-form">
@@ -58,17 +59,17 @@ use yii\widgets\Pjax;
             </div>
             <div class="col-md-4">
                 <?= $form->field($model, 'sender_id')->widget(Select2::class, [
-                    'data' => User::getUserWithRoles(['employee']),
+                    'data' => $userClass::getUserWithRoles(['employee']),
                     'options' => [
                         'placeholder' => '',
                         'dir' => 'rtl',
                     ],
                 ]); ?>
             </div>
-            <?php if ($model->input_type == AuLetter::INPUT_OUTPUT_SYSTEM): ?>
+            <?php if ($clientClass && $model->input_type == AuLetter::INPUT_OUTPUT_SYSTEM): ?>
                 <div class="col-md-12">
                     <?= $form->field($model, 'recipients')->widget(Select2::class, [
-                        'data' => Client::itemAlias('ParentBranches'),
+                        'data' => $clientClass::itemAlias('ParentBranches'),
                         'options' => [
                             'dir' => 'rtl',
                             'multiple' => true

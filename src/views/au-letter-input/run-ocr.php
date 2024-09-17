@@ -1,6 +1,7 @@
 <?php
 
-use common\widgets\CKEditorWidget;
+use hesabro\helpers\widgets\CKEditorWidget;
+use hesabro\automation\Module;
 use yii\bootstrap4\ActiveForm;
 use yii\bootstrap4\Html;
 

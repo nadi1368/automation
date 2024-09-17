@@ -1,10 +1,9 @@
 <?php
 
-use yii\helpers\Html;
-
-
 /* @var $this yii\web\View */
 /* @var $model hesabro\automation\models\AuSignature */
+
+use hesabro\automation\Module;
 
 $this->title = Module::t('module', 'Create Au Signature');
 $this->params['breadcrumbs'][] = ['label' => Module::t('module', 'Au Signature'), 'url' => ['index']];

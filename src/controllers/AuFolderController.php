@@ -22,6 +22,26 @@ class AuFolderController extends Controller
 {
     use AjaxValidationTrait;
 
+    const EVENT_BEFORE_CREATE = 'beforeCreate';
+
+    const EVENT_AFTER_CREATE = 'afterCreate';
+
+    const EVENT_BEFORE_UPDATE = 'beforeUpdate';
+
+    const EVENT_AFTER_UPDATE = 'afterUpdate';
+
+    const EVENT_BEFORE_DELETE = 'beforeDelete';
+
+    const EVENT_AFTER_DELETE = 'afterDelete';
+
+    const EVENT_BEFORE_SET_ACTIVE = 'beforeSetActive';
+
+    const EVENT_AFTER_SET_ACTIVE = 'afterSetActive';
+
+    const EVENT_BEFORE_SET_INACTIVE = 'beforeSetInactive';
+
+    const EVENT_AFTER_SET_INACTIVE = 'afterSetInactive';
+
     /**
      * {@inheritdoc}
      */
@@ -115,12 +135,12 @@ class AuFolderController extends Controller
         ];
         if ($this->request->isPost) {
             if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-                $this->trigger(AuFolderEvent::EVENT_BEFORE_CREATE, AuFolderEvent::create($model));
+                $this->trigger(self::EVENT_BEFORE_CREATE, AuFolderEvent::create($model));
                 $transaction = Yii::$app->db->beginTransaction();
                 try {
                     $flag = $model->save(false);
                     if ($flag) {
-                        $this->trigger(AuFolderEvent::EVENT_AFTER_CREATE, AuFolderEvent::create($model));
+                        $this->trigger(self::EVENT_AFTER_CREATE, AuFolderEvent::create($model));
                         $result = [
                             'success' => true,
                             'msg' => Module::t('module', "Item Created") // درخواست با موفقیت انجام شد
@@ -163,12 +183,12 @@ class AuFolderController extends Controller
             'msg' => Module::t('module', "Error In Save Info")
         ];
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $this->trigger(AuFolderEvent::EVENT_BEFORE_UPDATE, AuFolderEvent::create($model));
+            $this->trigger(self::EVENT_BEFORE_UPDATE, AuFolderEvent::create($model));
             $transaction = Yii::$app->db->beginTransaction();
             try {
                 $flag = $model->save(false);
                 if ($flag) {
-                    $this->trigger(AuFolderEvent::EVENT_AFTER_UPDATE, AuFolderEvent::create($model));
+                    $this->trigger(self::EVENT_AFTER_UPDATE, AuFolderEvent::create($model));
                     $result = [
                         'success' => true,
                         'msg' => Module::t('module', "Item Updated")
@@ -201,10 +221,10 @@ class AuFolderController extends Controller
         if ($model->canDelete()) {
             $transaction = \Yii::$app->db->beginTransaction();
             try {
-                $this->trigger(AuFolderEvent::EVENT_BEFORE_DELETE, AuFolderEvent::create($model));
+                $this->trigger(self::EVENT_BEFORE_DELETE, AuFolderEvent::create($model));
                 $flag = $model->softDelete();
                 if ($flag) {
-                    $this->trigger(AuFolderEvent::EVENT_AFTER_DELETE, AuFolderEvent::create($model));
+                    $this->trigger(self::EVENT_AFTER_DELETE, AuFolderEvent::create($model));
                     $transaction->commit();
                     $result = [
                         'status' => true,
@@ -244,13 +264,13 @@ class AuFolderController extends Controller
         $model = $this->findModel($id);
 
         if ($model->canActive()) {
-            $this->trigger(AuFolderEvent::EVENT_BEFORE_SET_ACTIVE, AuFolderEvent::create($model));
+            $this->trigger(self::EVENT_BEFORE_SET_ACTIVE, AuFolderEvent::create($model));
             $transaction = \Yii::$app->db->beginTransaction();
             try {
                 $model->status = AuFolder::STATUS_ACTIVE;
                 $flag = $model->save(false);
                 if ($flag) {
-                    $this->trigger(AuFolderEvent::EVENT_AFTER_SET_ACTIVE, AuFolderEvent::create($model));
+                    $this->trigger(self::EVENT_AFTER_SET_ACTIVE, AuFolderEvent::create($model));
                     $transaction->commit();
                     $result = [
                         'status' => true,
@@ -289,13 +309,13 @@ class AuFolderController extends Controller
     {
         $model = $this->findModel($id);
         if ($model->canInActive()) {
-            $this->trigger(AuFolderEvent::EVENT_BEFORE_SET_INACTIVE, AuFolderEvent::create($model));
+            $this->trigger(self::EVENT_BEFORE_SET_INACTIVE, AuFolderEvent::create($model));
             $transaction = \Yii::$app->db->beginTransaction();
             try {
                 $model->status = AuFolder::STATUS_INACTIVE;
                 $flag = $model->save(false);
                 if ($flag) {
-                    $this->trigger(AuFolderEvent::EVENT_AFTER_SET_INACTIVE, AuFolderEvent::create($this));
+                    $this->trigger(self::EVENT_AFTER_SET_INACTIVE, AuFolderEvent::create($this));
                     $transaction->commit();
                     $result = [
                         'status' => true,

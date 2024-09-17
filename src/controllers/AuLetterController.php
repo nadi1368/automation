@@ -27,6 +27,38 @@ class AuLetterController extends Controller
 {
     use AjaxValidationTrait;
 
+    public const EVENT_BEFORE_CONFIRM_AND_SEND = 'beforeConfirmAndSend';
+
+    public const EVENT_AFTER_CONFIRM_AND_SEND = 'afterConfirmAndSend';
+
+    public const EVENT_BEFORE_REFERENCE = 'beforeReference';
+
+    public const EVENT_AFTER_REFERENCE = 'afterReference';
+
+    public const EVENT_BEFORE_ANSWER = 'beforeAnswer';
+
+    public const EVENT_AFTER_ANSWER = 'afterAnswer';
+
+    public const EVENT_BEFORE_ATTACH = 'beforeAttach';
+
+    public const EVENT_AFTER_ATTACH = 'afterAttach';
+
+    public const EVENT_BEFORE_SIGNATURE = 'beforeSignature';
+
+    public const EVENT_AFTER_SIGNATURE = 'afterSignature';
+
+    public const EVENT_BEFORE_CREATE = 'beforeCreate';
+
+    public const EVENT_AFTER_CREATE = 'afterCreate';
+
+    public const EVENT_BEFORE_UPDATE = 'beforeUpdate';
+
+    public const EVENT_AFTER_UPDATE = 'afterUpdate';
+
+    public const EVENT_BEFORE_DELETE = 'beforeDelete';
+
+    public const EVENT_AFTER_DELETE = 'afterDelete';
+
     /**
      * {@inheritdoc}
      */
@@ -118,10 +150,10 @@ class AuLetterController extends Controller
         $transaction = \Yii::$app->db->beginTransaction();
         try {
             if ($model->canDelete()) {
-                $this->trigger(AuLetterEvent::EVENT_BEFORE_DELETE, AuLetterEvent::create($model));
+                $this->trigger(self::EVENT_BEFORE_DELETE, AuLetterEvent::create($model));
                 $flag = $model->softDelete();
                 if ($flag) {
-                    $this->trigger(AuLetterEvent::EVENT_BEFORE_DELETE, AuLetterEvent::create($model));
+                    $this->trigger(self::EVENT_AFTER_DELETE, AuLetterEvent::create($model));
                     $transaction->commit();
                     $this->flash('success', Module::t('module', "Item Deleted"));
                 } else {
@@ -153,10 +185,10 @@ class AuLetterController extends Controller
         $transaction = \Yii::$app->db->beginTransaction();
         try {
             if ($model->canConfirmAndSend()) {
-                $this->trigger(AuLetterEvent::EVENT_BEFORE_CONFIRM_AND_SEND, AuLetterEvent::create($model));
+                $this->trigger(self::EVENT_BEFORE_CONFIRM_AND_SEND, AuLetterEvent::create($model));
                 $flag = $model->confirmAndSend();
                 if ($flag) {
-                    $this->trigger(AuLetterEvent::EVENT_AFTER_CONFIRM_AND_SEND, AuLetterEvent::create($model));
+                    $this->trigger(self::EVENT_AFTER_CONFIRM_AND_SEND, AuLetterEvent::create($model));
                     $transaction->commit();
                     $this->flash('success', Module::t('module', "Item Updated"));
                 } else {
@@ -195,12 +227,12 @@ class AuLetterController extends Controller
             'msg' => Module::t('module', "Error In Save Info")
         ];
         if ($modelReference->load(Yii::$app->request->post()) && $modelReference->validate()) {
-            $this->trigger(AuLetterEvent::EVENT_BEFORE_REFERENCE, AuLetterEvent::create($model));
+            $this->trigger(self::EVENT_BEFORE_REFERENCE, AuLetterEvent::create($model));
             $transaction = Yii::$app->db->beginTransaction();
             try {
                 $flag = $modelReference->save();
                 if ($flag) {
-                    $this->trigger(AuLetterEvent::EVENT_AFTER_REFERENCE, AuLetterEvent::create($model));
+                    $this->trigger(self::EVENT_AFTER_REFERENCE, AuLetterEvent::create($model));
                     $result = [
                         'success' => true,
                         'msg' => Module::t('module', "Item Updated")
@@ -241,12 +273,12 @@ class AuLetterController extends Controller
             'msg' => Module::t('module', "Error In Save Info")
         ];
         if ($modelAnswer->load(Yii::$app->request->post()) && $modelAnswer->validate()) {
-            $this->trigger(AuLetterEvent::EVENT_BEFORE_ANSWER, AuLetterEvent::create($model));
+            $this->trigger(self::EVENT_BEFORE_ANSWER, AuLetterEvent::create($model));
             $transaction = Yii::$app->db->beginTransaction();
             try {
                 $flag = $modelAnswer->save();
                 if ($flag) {
-                    $this->trigger(AuLetterEvent::EVENT_AFTER_ANSWER, AuLetterEvent::create($model));
+                    $this->trigger(self::EVENT_AFTER_ANSWER, AuLetterEvent::create($model));
                     $result = [
                         'success' => true,
                         'msg' => Module::t('module', "Item Updated")
@@ -287,7 +319,7 @@ class AuLetterController extends Controller
             'msg' => Module::t('module', "Error In Save Info")
         ];
         if ($modelAttach->load(Yii::$app->request->post()) && $modelAttach->validate()) {
-            $this->trigger(AuLetterEvent::EVENT_BEFORE_ATTACH, AuLetterEvent::create($model));
+            $this->trigger(self::EVENT_BEFORE_ATTACH, AuLetterEvent::create($model));
             $transaction = Yii::$app->db->beginTransaction();
             try {
                 $flag = true;
@@ -305,7 +337,7 @@ class AuLetterController extends Controller
                     $flag = $flag && $model->save(false);
                 }
                 if ($flag) {
-                    $this->trigger(AuLetterEvent::EVENT_AFTER_ATTACH, AuLetterEvent::create($model));
+                    $this->trigger(self::EVENT_AFTER_ATTACH, AuLetterEvent::create($model));
                     $result = [
                         'success' => true,
                         'msg' => Module::t('module', "Item Updated")
@@ -340,10 +372,10 @@ class AuLetterController extends Controller
         try {
             if ($signature->canUse()) {
                 if ($model->canSignature()) {
-                    $this->trigger(AuLetterEvent::EVENT_BEFORE_SIGNATURE, AuLetterEvent::create($model));
+                    $this->trigger(self::EVENT_BEFORE_SIGNATURE, AuLetterEvent::create($model));
                     $flag = $model->signature($signature);
                     if ($flag) {
-                        $this->trigger(AuLetterEvent::EVENT_AFTER_SIGNATURE, AuLetterEvent::create($model));
+                        $this->trigger(self::EVENT_AFTER_SIGNATURE, AuLetterEvent::create($model));
                         $transaction->commit();
                         $this->flash('success', Module::t('module', "Item Updated"));
                     } else {

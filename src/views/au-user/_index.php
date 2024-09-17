@@ -1,8 +1,7 @@
 <?php
 
 use hesabro\automation\models\AuUser;
-use common\models\Account;
-use common\widgets\TableView;
+use hesabro\helpers\widgets\TableView;
 
 /* @var $this yii\web\View */
 /* @var $model AuUser */
@@ -20,7 +19,7 @@ use common\widgets\TableView;
                 [
                     'attribute' => 'created_at',
                     'value' => function (AuUser $model) {
-                        return '<span title="بروز رسانی شده در '.Yii::$app->jdate->date("Y/m/d  H:i", $model->updated_at).'">'.Yii::$app->jdate->date("Y/m/d  H:i", $model->created_at).'</span>';
+                        return '<span title="بروز رسانی شده در '.Yii::$app->jdf::jdate("Y/m/d  H:i", $model->updated_at).'">'.Yii::$app->jdf::jdate("Y/m/d  H:i", $model->created_at).'</span>';
                     },
                     'format' => 'raw'
                 ],

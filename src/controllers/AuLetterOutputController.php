@@ -104,11 +104,12 @@ class AuLetterOutputController extends AuLetterController
      */
     public function actionCreate($type = null)
     {
-        $model = new AuLetter(['type' => AuLetter::TYPE_OUTPUT, 'input_type' => (int)$type, 'date' => Yii::$app->jdate->date("Y/m/d")]);
+        $model = new AuLetter(['type' => AuLetter::TYPE_OUTPUT, 'input_type' => (int)$type, 'date' => Yii::$app->jdf::jdate("Y/m/d")]);
         $model->setScenario(AuLetter::SCENARIO_CREATE_OUTPUT);
         if ($this->request->isPost) {
             if ($model->load(Yii::$app->request->post()) && $model->validate()) {
                 $transaction = Yii::$app->db->beginTransaction();
+                $this->trigger(self::EVENT_BEFORE_CREATE, AuLetterInternalEvent::create($model));
                 try {
                     $flag = $model->save(false);
                     if ($model->input_type == AuLetter::INPUT_OUTPUT_SYSTEM) {

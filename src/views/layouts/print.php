@@ -1,13 +1,15 @@
 <?php
 
-use backend\assets\PrintLetterAsset;
+use hesabro\automation\PrintLetterAsset;
 use yii\helpers\Html;
 use yii\web\View;
+use hesabro\helpers\CKEditorFontAsset;
 
 /* @var $this View */
 /* @var $content string */
 
 PrintLetterAsset::register($this);
+CKEditorFontAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
     <html dir="rtl" lang="<?= Yii::$app->language ?>">

@@ -19,7 +19,11 @@ class Module extends \yii\base\Module
 
     public string | null $client = null;
 
-    public string|null $user = null;
+    public string | null $user = null;
+
+    public string | null $websiteDomain = null;
+
+    public string | null $websiteName = null;
 
     public array $modelMap = [];
 
@@ -33,7 +37,7 @@ class Module extends \yii\base\Module
             return array_map(fn ($item) => $this->getModel($item), $namespace);
         }
 
-        return $this->modelMap[$namespace] ?? null;
+        return $this->modelMap[$namespace] ?? $namespace;
     }
 
     /**
@@ -54,7 +58,7 @@ class Module extends \yii\base\Module
 
     private function registerTranslation(): void
     {
-        Yii::$app->i18n->translations['hesabro/automation'] = [
+        Yii::$app->i18n->translations['hesabro/automation*'] = [
             'class' => PhpMessageSource::class,
             'basePath' => '@hesabro/automation/messages',
             'sourceLanguage' => 'en-US',

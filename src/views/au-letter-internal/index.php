@@ -1,9 +1,10 @@
 <?php
 
 use hesabro\automation\models\AuLetter;
+use hesabro\automation\Module;
 use yii\bootstrap4\ButtonDropdown;
 use yii\helpers\Html;
-use common\widgets\grid\GridView;
+use hesabro\helpers\widgets\grid\GridView;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */

@@ -2,6 +2,7 @@
 
 namespace hesabro\automation\controllers;
 
+use hesabro\automation\events\AuUserEvent;
 use hesabro\automation\Module;
 use hesabro\helpers\traits\AjaxValidationTrait;
 use Yii;
@@ -20,6 +21,18 @@ class AuUserController extends Controller
 {
     use AjaxValidationTrait;
 
+    public const EVENT_BEFORE_CREATE = 'beforeCreate';
+
+    public const EVENT_AFTER_CREATE = 'afterCreate';
+
+    public const EVENT_BEFORE_UPDATE = 'beforeUpdate';
+
+    public const EVENT_AFTER_UPDATE = 'afterUpdate';
+
+    public const EVENT_BEFORE_DELETE = 'beforeDelete';
+
+    public const EVENT_AFTER_DELETE = 'afterDelete';
+
     /**
      * {@inheritdoc}
      */
@@ -27,13 +40,13 @@ class AuUserController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
             ],
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'rules' =>
                     [
                         [
@@ -115,8 +128,10 @@ class AuUserController extends Controller
             if ($model->load(Yii::$app->request->post()) && $model->validate()) {
                 $transaction = Yii::$app->db->beginTransaction();
                 try {
+                    $this->trigger(self::EVENT_BEFORE_CREATE, AuUserEvent::create($model));
                     $flag = $model->save(false);
                     if ($flag) {
+                        $this->trigger(self::EVENT_AFTER_CREATE, AuUserEvent::create($model));
                         $result = [
                             'success' => true,
                             'msg' => Module::t('module', "Item Created")
@@ -160,8 +175,10 @@ class AuUserController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $transaction = Yii::$app->db->beginTransaction();
             try {
+                $this->trigger(self::EVENT_BEFORE_UPDATE, AuUserEvent::create($model));
                 $flag = $model->save(false);
                 if ($flag) {
+                    $this->trigger(self::EVENT_AFTER_UPDATE, AuUserEvent::create($model));
                     $result = [
                         'success' => true,
                         'msg' => Module::t('module', "Item Updated")
@@ -195,8 +212,10 @@ class AuUserController extends Controller
         if ($model->canDelete()) {
             $transaction = \Yii::$app->db->beginTransaction();
             try {
+                $this->trigger(self::EVENT_BEFORE_DELETE, AuUserEvent::create($model));
                 $flag = $model->softDelete();
                 if ($flag) {
+                    $this->trigger(self::EVENT_AFTER_DELETE, AuUserEvent::create($model));
                     $transaction->commit();
                     $result = [
                         'status' => true,

@@ -2,13 +2,12 @@
 
 use hesabro\automation\models\AuLetter;
 use hesabro\automation\models\AuUser;
-use common\models\User;
+use hesabro\automation\Module;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
-use skeeks\yii2\ckeditor\CKEditorPresets;
-use common\widgets\CKEditorWidget;
+use hesabro\helpers\widgets\CKEditorWidget;
 use hesabro\automation\models\AuFolder;
 use yii\helpers\Url;
 use yii\web\JsExpression;
@@ -18,6 +17,8 @@ use yii\widgets\Pjax;
 /* @var $this yii\web\View */
 /* @var $model hesabro\automation\models\AuLetter */
 /* @var $form yii\bootstrap4\ActiveForm */
+
+$userClass = Module::getInstance()->user;
 ?>
 
 <div class="au-letter-form">
@@ -59,7 +60,7 @@ use yii\widgets\Pjax;
             </div>
             <div class="col-md-12">
                 <?= $form->field($model, 'recipients')->widget(Select2::class, [
-                    'data' => User::getUserWithRoles(['employee']),
+                    'data' => $userClass::getUserWithRoles(['employee']),
                     'options' => [
                         //'placeholder' => 'گیرندگان',
                         'dir' => 'rtl',

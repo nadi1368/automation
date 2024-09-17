@@ -2,10 +2,6 @@
 
 namespace hesabro\automation\models;
 
-use backend\modules\master\models\Client;
-use common\behaviors\SendAutoCommentsBehavior;
-use common\interfaces\SendAutoCommentInterface;
-use common\models\CommentsType;
 use console\job\CreateLetterJob;
 use hesabro\automation\Module;
 use Yii;
@@ -16,7 +12,6 @@ use yii\behaviors\BlameableBehavior;
 use hesabro\helpers\behaviors\JsonAdditional;
 use Exception;
 use GuzzleHttp\Client as GuzzleHttpClient;
-use GuzzleHttp\Psr7\Stream;
 use yii\helpers\Html;
 use yii\helpers\HtmlPurifier;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
@@ -57,7 +52,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property string $printNumber
  * @property bool $viewed
  */
-class AuLetter extends \yii\db\ActiveRecord implements SendAutoCommentInterface
+class AuLetter extends \yii\db\ActiveRecord
 {
     const STATUS_DELETED = 0;
     const STATUS_DRAFT = 1; // پیش نویش
@@ -652,55 +647,6 @@ class AuLetter extends \yii\db\ActiveRecord implements SendAutoCommentInterface
         return $list;
     }
 
-
-    /**
-     * @return array
-     */
-    public function getUserMail(): array
-    {
-        $users = [];
-        if (in_array($this->getScenario(), [self::SCENARIO_CONFIRM_AND_RECEIVE_INPUT, self::SCENARIO_CONFIRM_AND_SEND_INTERNAL])) {
-            foreach ($this->recipientUser as $auLetterUser) {
-                $users[] = $auLetterUser->user_id;
-            }
-        }
-        return $users;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLinkMail(): string
-    {
-        return Yii::$app->urlManager->createAbsoluteUrl(['/automation/' . AuLetter::itemAlias('TypeControllers', $this->type) . '/view', 'id' => $this->id]);
-    }
-
-    /**
-     * @return string
-     */
-    public function getContentMail(): string
-    {
-        $content = '';
-        if (in_array($this->getScenario(), [self::SCENARIO_CONFIRM_AND_RECEIVE_INPUT, self::SCENARIO_CONFIRM_AND_SEND_INTERNAL])) {
-            $content = Html::tag('p', "یک نامه در سیستم ثبت شده است.");
-            if ($this->update !== null) {
-                $content .= Html::tag('p', 'این نامه توسط "' . $this->update?->fullName . '" در سیستم ثبت شد.');
-            }
-            $content .= Html::tag('p', 'عنوان نامه : "' . $this->title . '"');
-        }
-        if (in_array($this->getScenario(), [self::SCENARIO_RECEIVE_INPUT])) {
-            $content = Html::tag('p', "یک نامه در سیستم ثبت شده است.");
-            $content .= Html::tag('p', 'این نامه توسط "' . $this->showSender() . '" در سیستم ثبت شد.');
-            $content .= Html::tag('p', 'عنوان نامه : "' . $this->title . '"');
-        }
-        return $content;
-    }
-
-    public function autoCommentCondition(): bool
-    {
-        return true;
-    }
-
     /**
      * @return int|string|null
      */
@@ -847,20 +793,6 @@ class AuLetter extends \yii\db\ActiveRecord implements SendAutoCommentInterface
                     'attaches' => 'Any',
                     'files_text' => 'String',
                 ],
-            ],
-            [
-                'class' => SendAutoCommentsBehavior::class,
-                'type' => CommentsType::LETTER_INTERNAL,
-                'title' => 'نامه های داخلی',
-                'scenarioValid' => [self::SCENARIO_CONFIRM_AND_RECEIVE_INPUT, self::SCENARIO_CONFIRM_AND_SEND_INTERNAL],
-                'callAfterUpdate' => true
-            ],
-            [
-                'class' => SendAutoCommentsBehavior::class,
-                'type' => CommentsType::LETTER_OUTPUT,
-                'title' => 'نامه های وارده بین سیستمی',
-                'scenarioValid' => [self::SCENARIO_RECEIVE_INPUT],
-                'callAfterUpdate' => false
             ],
             'softDeleteBehavior' => [
                 'class' => SoftDeleteBehavior::class,

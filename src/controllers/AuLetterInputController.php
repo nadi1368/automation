@@ -2,6 +2,7 @@
 
 namespace hesabro\automation\controllers;
 
+use hesabro\automation\events\AuLetterInputEvent;
 use hesabro\automation\Module;
 use hesabro\helpers\traits\AjaxValidationTrait;
 use Yii;
@@ -22,6 +23,14 @@ use yii\filters\VerbFilter;
 class AuLetterInputController extends AuLetterController
 {
     use AjaxValidationTrait;
+
+    public const EVENT_BEFORE_CONFIRM_AND_RECEIVE = 'beforeConfirmAndReceive';
+
+    public const EVENT_AFTER_CONFIRM_AND_RECEIVE = 'afterConfirmAndReceive';
+
+    public const EVENT_BEFORE_RUN_OCR = 'beforeRunOcr';
+
+    public const EVENT_AFTER_RUN_OCR = 'afterRunOcr';
 
     /**
      * {@inheritdoc}
@@ -111,16 +120,18 @@ class AuLetterInputController extends AuLetterController
      */
     public function actionCreate()
     {
-        $model = new AuLetter(['type' => AuLetter::TYPE_INPUT, 'date' => Yii::$app->jdate->date("Y/m/d")]);
+        $model = new AuLetter(['type' => AuLetter::TYPE_INPUT, 'date' => Yii::$app->jdf::jdate("Y/m/d")]);
         $model->setScenario(AuLetter::SCENARIO_CREATE_INPUT);
         if ($this->request->isPost) {
             if ($model->load(Yii::$app->request->post()) && $model->validate()) {
                 $transaction = Yii::$app->db->beginTransaction();
                 try {
+                    $this->trigger(self::EVENT_BEFORE_CREATE, AuLetterInputEvent::create($model));
                     $flag = $model->save(false);
                     $flag = $flag && $model->createRecipientsInternal();
                     $flag = $flag && $model->createCCRecipientsInternal();
                     if ($flag) {
+                        $this->trigger(self::EVENT_AFTER_CREATE, AuLetterInputEvent::create($model));
                         $transaction->commit();
                         $this->flash('success', Module::t('module', "Item Created"));
                         return $this->redirect(['view', 'id' => $model->id, 'slave_id' => $model->slave_id]);
@@ -163,10 +174,12 @@ class AuLetterInputController extends AuLetterController
             if ($model->load(Yii::$app->request->post()) && $model->validate()) {
                 $transaction = Yii::$app->db->beginTransaction();
                 try {
+                    $this->trigger(self::EVENT_BEFORE_UPDATE, AuLetterInputEvent::create($model));
                     $flag = $model->save(false);
                     $flag = $flag && $model->updateRecipientsInternal($old_recipients);
                     $flag = $flag && $model->updateCCRecipientsInternal($old_cc_recipients);
                     if ($flag) {
+                        $this->trigger(self::EVENT_AFTER_UPDATE, AuLetterInputEvent::create($model));
                         $transaction->commit();
                         $this->flash('success', Module::t('module', "Item Created"));
                         return $this->redirect(['view', 'id' => $model->id]);
@@ -211,10 +224,12 @@ class AuLetterInputController extends AuLetterController
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $transaction = Yii::$app->db->beginTransaction();
             try {
+                $this->trigger(self::EVENT_BEFORE_CONFIRM_AND_RECEIVE, AuLetterInputEvent::create($model));
                 $flag = $model->confirmAndSend();  // save model
                 $flag = $flag && $model->createRecipientsInternal();
                 $flag = $flag && $model->createCCRecipientsInternal();
                 if ($flag) {
+                    $this->trigger(self::EVENT_AFTER_CONFIRM_AND_RECEIVE, AuLetterInputEvent::create($model));
                     $result = [
                         'success' => true,
                         'msg' => Module::t('module', "Item Updated")
@@ -244,7 +259,9 @@ class AuLetterInputController extends AuLetterController
         $model = $this->findModel($id);
         if ($model->canRunOCR()) {
             if ($model->load(Yii::$app->request->post())) {
+                $this->trigger(self::EVENT_BEFORE_RUN_OCR, AuLetterInputEvent::create($model));
                 if ($model->save()) {
+                    $this->trigger(self::EVENT_AFTER_RUN_OCR, AuLetterInputEvent::create($model));
                     $result['success'] = true;
                     $result['msg'] = 'عملیات با موفقیت ثبت شد.';
                 } else {

@@ -1,13 +1,11 @@
 <?php
 
 use hesabro\automation\models\AuFolder;
-use hesabro\automation\models\AuLetter;
-use common\components\Helper;
+use hesabro\automation\Module;
 use yii\bootstrap4\ButtonDropdown;
 use yii\helpers\Html;
-use common\widgets\grid\GridView;
+use hesabro\helpers\widgets\grid\GridView;
 use yii\helpers\Url;
-use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $searchModel hesabro\automation\models\AuFolderSearch */
@@ -83,7 +81,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'status',
                     'value' => function (AuFolder $model) {
-                        return Helper::itemAlias('YesOrNoIcon', $model->status);
+                        return Yii::$app->helper::itemAlias('YesOrNoIcon', $model->status);
                     },
                     'format' => 'raw',
                 ],

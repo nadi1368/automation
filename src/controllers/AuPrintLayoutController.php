@@ -2,6 +2,8 @@
 
 namespace hesabro\automation\controllers;
 
+use hesabro\automation\events\AuPrintLayoutEvent;
+use hesabro\automation\Module;
 use Yii;
 use hesabro\automation\models\AuPrintLayout;
 use hesabro\automation\models\AuPrintLayoutSearch;
@@ -16,6 +18,26 @@ use yii\web\Response;
  */
 class AuPrintLayoutController extends Controller
 {
+    public const EVENT_BEFORE_CREATE = 'beforeCreate';
+
+    public const EVENT_AFTER_CREATE = 'afterCreate';
+
+    public const EVENT_BEFORE_UPDATE = 'beforeUpdate';
+
+    public const EVENT_AFTER_UPDATE = 'afterUpdate';
+
+    public const EVENT_BEFORE_DELETE = 'beforeDelete';
+
+    public const EVENT_AFTER_DELETE = 'afterDelete';
+
+    public const EVENT_BEFORE_SET_ACTIVE = 'beforeSetActive';
+
+    public const EVENT_AFTER_SET_ACTIVE = 'afterSetActive';
+
+    public const EVENT_BEFORE_SET_INACTIVE = 'beforeSetInactive';
+
+    public const EVENT_AFTER_SET_INACTIVE = 'afterSetInactive';
+
     /**
      * {@inheritdoc}
      */
@@ -85,7 +107,9 @@ class AuPrintLayoutController extends Controller
     {
         $model = new AuPrintLayout();
         $model->setScenario(AuPrintLayout::SCENARIO_CREATE);
+        $this->trigger(self::EVENT_BEFORE_CREATE, AuPrintLayoutEvent::create($model));
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $this->trigger(self::EVENT_AFTER_CREATE, AuPrintLayoutEvent::create($model));
             $this->flash('success', Module::t('module', "Item Created"));
             return $this->redirect(['index']);
         }
@@ -110,7 +134,9 @@ class AuPrintLayoutController extends Controller
             $this->flash('danger', Module::t('module', "Can Not Update"));
             return $this->redirect(['index']);
         }
+        $this->trigger(self::EVENT_BEFORE_UPDATE, AuPrintLayoutEvent::create($model));
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $this->trigger(self::EVENT_AFTER_UPDATE, AuPrintLayoutEvent::create($model));
             $this->flash('success', Module::t('module', "Item Updated"));
             return $this->redirect(['index']);
         }
@@ -133,8 +159,10 @@ class AuPrintLayoutController extends Controller
         if ($model->canDelete()) {
             $transaction = \Yii::$app->db->beginTransaction();
             try {
+                $this->trigger(self::EVENT_BEFORE_DELETE, AuPrintLayoutEvent::create($model));
                 $flag = $model->softDelete();
                 if ($flag) {
+                    $this->trigger(self::EVENT_AFTER_DELETE, AuPrintLayoutEvent::create($model));
                     $transaction->commit();
                     $result = [
                         'status' => true,
@@ -176,9 +204,11 @@ class AuPrintLayoutController extends Controller
         if ($model->canActive()) {
             $transaction = \Yii::$app->db->beginTransaction();
             try {
+                $this->trigger(self::EVENT_BEFORE_SET_ACTIVE, AuPrintLayoutEvent::create($model));
                 $model->status = AuPrintLayout::STATUS_ACTIVE;
                 $flag = $model->save(false);
                 if ($flag) {
+                    $this->trigger(self::EVENT_AFTER_SET_ACTIVE, AuPrintLayoutEvent::create($model));
                     $transaction->commit();
                     $result = [
                         'status' => true,
@@ -219,9 +249,11 @@ class AuPrintLayoutController extends Controller
         if ($model->canInActive()) {
             $transaction = \Yii::$app->db->beginTransaction();
             try {
+                $this->trigger(self::EVENT_BEFORE_SET_INACTIVE, AuPrintLayoutEvent::create($model));
                 $model->status = AuPrintLayout::STATUS_INACTIVE;
                 $flag = $model->save(false);
                 if ($flag) {
+                    $this->trigger(self::EVENT_AFTER_SET_INACTIVE, AuPrintLayoutEvent::create($model));
                     $transaction->commit();
                     $result = [
                         'status' => true,
