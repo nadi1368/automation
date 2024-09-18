@@ -4,7 +4,7 @@ namespace hesabro\automation\events;
 
 class AuLetterInputEvent extends Event
 {
-    private $_auLetterInput;
+    public $auLetterInput;
 
     protected static $variableName = 'auLetterInput';
 }

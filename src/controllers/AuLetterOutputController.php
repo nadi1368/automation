@@ -2,6 +2,7 @@
 
 namespace hesabro\automation\controllers;
 
+use hesabro\automation\events\AuLetterInternalEvent;
 use hesabro\helpers\traits\AjaxValidationTrait;
 use hesabro\automation\Module;
 use Yii;

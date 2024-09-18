@@ -4,7 +4,7 @@ namespace hesabro\automation\events;
 
 class AuFolderEvent extends Event
 {
-    private $_auFolder;
+    public $auFolder;
 
     protected static $variableName = 'auFolder';
 }

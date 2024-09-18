@@ -2,16 +2,14 @@
 
 namespace hesabro\automation\models;
 
-use backend\modules\storage\behaviors\StorageUploadBehavior;
-use backend\modules\storage\models\StorageFiles;
-use common\behaviors\CdnUploadFileBehavior;
 use hesabro\automation\Module;
 use Yii;
 use hesabro\changelog\behaviors\LogBehavior;
 use hesabro\errorlog\behaviors\TraceBehavior;
 use hesabro\helpers\behaviors\JsonAdditional;
-use yii\helpers\ArrayHelper;
+use yii\db\ActiveRecord;
 use yii\helpers\Html;
+use hesabro\automation\interfaces\StorageModel;
 
 /**
  * This is the model class for table "automation_letter_activity".
@@ -27,9 +25,8 @@ use yii\helpers\Html;
  *
  * @property object $creator
  * @property AuLetter $letter
- * @mixin  StorageUploadBehavior
  */
-class AuLetterActivity extends \yii\db\ActiveRecord
+class AuLetterActivity extends ActiveRecord implements StorageModel
 {
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 1;
@@ -150,7 +147,7 @@ class AuLetterActivity extends \yii\db\ActiveRecord
             case self::TYPE_ANSWER:
                 return nl2br($this->answer);
             case self::TYPE_ATTACH:
-                if ($fileUrl = $this->getFileUrl('file')) ;
+                if ($fileUrl = $this->getStorageFileUrl('file')) ;
                 {
                     if ($this->isImage()) {
                         return Html::a(Html::img($fileUrl, ['width' => 200, 'height' => 200, 'class' => "rounded border img-thumbnail"]), $fileUrl, ['data-pjax' => 0]);
@@ -235,26 +232,19 @@ class AuLetterActivity extends \yii\db\ActiveRecord
                     'answer' => 'String',
                     'signatureId' => 'Integer',
                 ],
-            ],
-
-            [
-                'class' => CdnUploadFileBehavior::class,
-                'model_class' => 'letters',
-                'allowed_mime_types' => 'application,image',
-            ],
-            [
-                'class' => StorageUploadBehavior::class,
-                'modelType' => StorageFiles::MODEL_TYPE_AUTOMATION_LETTER,
-                'attributes' => ['file'],
-                'accessFile' => StorageFiles::ACCESS_PRIVATE,
-                'scenarios' => [self::SCENARIO_ATTACH],
-                'sharedWith' => function (self $model) {
-            AuLetter::find();
-                    $auLetter = AuLetterWithoutSlave::findOne($model->letter_id);
-                    return $auLetter !== null && $auLetter->type == AuLetter::TYPE_OUTPUT && $auLetter->input_type == AuLetter::INPUT_OUTPUT_SYSTEM ? array_keys(ArrayHelper::map($auLetter->recipientClientWithoutSlave, 'client_id', 'client_id')) : [];
-                }
-            ],
+            ]
         ];
     }
 
+    public function getStorageFileContent(string $attribute) {
+        return $this->getStorageFile($attribute)->one()?->getFileContent();
+    }
+
+    public function getStorageFileName(string $attribute) {
+        return $this->getFileStorageName($attribute);
+    }
+
+    public function getStorageFileUrl(string $attribute) {
+        return $this->getFileUrl($attribute);
+    }
 }

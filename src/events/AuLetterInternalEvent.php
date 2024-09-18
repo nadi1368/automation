@@ -4,7 +4,7 @@ namespace hesabro\automation\events;
 
 class AuLetterInternalEvent extends Event
 {
-    private $_auLetterInternal;
+    public $auLetterInternal;
 
     protected static $variableName = 'auLetterInternal';
 }

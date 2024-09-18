@@ -5,7 +5,7 @@ namespace hesabro\automation\models;
 /**
  * This is the ActiveQuery class for [[AuLetter]].
  *
- * @see AuLetter
+ * @see AuLetterActivity
  */
 class AuLetterQuery extends \yii\db\ActiveQuery
 {

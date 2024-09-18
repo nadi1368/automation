@@ -2,7 +2,6 @@
 
 namespace hesabro\automation\models;
 
-use console\job\CreateLetterJob;
 use hesabro\automation\Module;
 use Yii;
 use hesabro\changelog\behaviors\LogBehavior;
@@ -88,7 +87,7 @@ class AuLetter extends \yii\db\ActiveRecord
     public $signatures;
     public $files_text;
     // ----------------------------
-    
+
     private $_viewd = null;
 
 
@@ -492,11 +491,7 @@ class AuLetter extends \yii\db\ActiveRecord
         $lastNumber = $this->folder->getAndSaveLastNumber();
         if ($lastNumber > 0) {
             $this->number = $lastNumber;
-            $flag = $this->save(false);
-            if ($this->type == self::TYPE_OUTPUT && $this->input_type == self::INPUT_OUTPUT_SYSTEM) {
-                $flag = $flag && $this->sendToAnotherClient();
-            }
-            return $flag;
+            return $this->save(false);
         }
         $this->error_msg = 'خطا در شماره گذاری نامه.لطفا مجددا تلاش نمایید.';
         return false;
@@ -516,21 +511,6 @@ class AuLetter extends \yii\db\ActiveRecord
         $flag = $auLetterActivity->save();
         $this->signatures[$signature->id] = $signature->title;
         return $flag && $this->save(false);
-    }
-
-    /**
-     * @return bool
-     */
-    public function sendToAnotherClient(): bool
-    {
-        foreach ($this->recipientClient as $letterClient) {
-            Yii::$app->queueSql->push(new CreateLetterJob([
-                "slaveId" => $letterClient->client_id,
-                "letterId" => $this->id,
-            ]));
-        }
-
-        return true;
     }
 
     /**
@@ -660,8 +640,8 @@ class AuLetter extends \yii\db\ActiveRecord
         $client = new GuzzleHttpClient();
         $ocr_text = '';
         try {
-            foreach ($this->activity as $activity) { /** @var AuLetterActivity $activity */
-                $ext = pathinfo($activity->storageFile->file_name, PATHINFO_EXTENSION);
+            foreach ($this->activity as $activity) {
+                $ext = pathinfo($activity->getStorageFileName('file'), PATHINFO_EXTENSION);
                 if (!in_array($ext, ['jpg', 'jpeg', 'png'])) { // supported file format
                     continue;
                 }
@@ -669,8 +649,8 @@ class AuLetter extends \yii\db\ActiveRecord
                     'multipart' => [
                             [
                                 'name' => 'image',
-                                'contents' => $activity->storageFile->fileContent,
-                                'filename' => $activity->storageFile->file_name,
+                                'contents' => $activity->getStorageFileContent('file'),
+                                'filename' => $activity->getStorageFileName('file'),
                             ],
                     ],
                 ]);

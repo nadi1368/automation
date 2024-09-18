@@ -4,7 +4,7 @@ namespace hesabro\automation\events;
 
 class AuUserEvent extends Event
 {
-    private $_auUser;
+    public $auUser;
 
     protected static $variableName = 'auUser';
 }

@@ -4,7 +4,7 @@ namespace hesabro\automation\events;
 
 class AuPrintLayoutEvent extends Event
 {
-    private $_auPrintLayout;
+    public $auPrintLayout;
 
     protected static $variableName = 'auPrintLayout';
 }

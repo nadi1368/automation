@@ -4,7 +4,7 @@ namespace hesabro\automation\events;
 
 class AuSignatureEvent extends Event
 {
-    private $_auSignature;
+    public $auSignature;
 
     protected static $variableName = 'auSignature';
 }
