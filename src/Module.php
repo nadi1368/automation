@@ -21,15 +21,7 @@ class Module extends \yii\base\Module
 
     public string | null $user = null;
 
-    public string | null $websiteDomain = null;
-
-    public string | null $websiteName = null;
-
     public array $modelMap = [];
-
-    public array $eventMap = [
-        AuFolderController::class => AuFolderEvent::class
-    ];
 
     public function getModel(string|array $namespace): string|array|null
     {

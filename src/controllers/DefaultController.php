@@ -27,17 +27,17 @@ class DefaultController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' =>
-                    [
-                        [
-                            'allow' => true,
-                            'roles' => ['automation/index', 'superadmin'],
-                            'actions' => ['index']
-                        ],
-                    ]
-            ]
+//            'access' => [
+//                'class' => AccessControl::className(),
+//                'rules' =>
+//                    [
+//                        [
+//                            'allow' => true,
+//                            'roles' => ['automation/index', 'superadmin'],
+//                            'actions' => ['index']
+//                        ],
+//                    ]
+//            ]
         ];
     }
 

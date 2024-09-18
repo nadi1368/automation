@@ -9,7 +9,7 @@ return [
         'label' => "داشبورد",
         'icon' => 'far fa-home',
         'group' => 'settings',
-        'url' => ['/automation'],
+        'url' => ["/$moduleId"],
     ],
     [
         'label' => 'اطلاعات اولیه',

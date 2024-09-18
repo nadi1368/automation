@@ -50,37 +50,37 @@ class AuPrintLayoutController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
-            'access' => [
-                'class' => AccessControl::className(),
-                'rules' =>
-                [
-                    [
-                        'allow' => true,
-                        'roles' => ['AuPrintLayout/index', 'superadmin'],
-                        'actions' => ['index']
-                    ],
-                    [
-                        'allow' => true,
-                        'roles' => ['AuPrintLayout/create', 'superadmin'],
-                        'actions' => ['create']
-                    ],
-                    [
-                        'allow' => true,
-                        'roles' => ['AuPrintLayout/update', 'superadmin'],
-                        'actions' => ['update', 'set-in-active', 'set-active']
-                    ],
-                    [
-                        'allow' => true,
-                        'roles' => ['AuPrintLayout/delete', 'superadmin'],
-                        'actions' => ['delete']
-                    ],
-                    [
-                        'allow' => true,
-                        'roles' => ['AuPrintLayout/view', 'superadmin'],
-                        'actions' => ['view']
-                    ],
-                ]
-            ]
+//            'access' => [
+//                'class' => AccessControl::className(),
+//                'rules' =>
+//                [
+//                    [
+//                        'allow' => true,
+//                        'roles' => ['AuPrintLayout/index', 'superadmin'],
+//                        'actions' => ['index']
+//                    ],
+//                    [
+//                        'allow' => true,
+//                        'roles' => ['AuPrintLayout/create', 'superadmin'],
+//                        'actions' => ['create']
+//                    ],
+//                    [
+//                        'allow' => true,
+//                        'roles' => ['AuPrintLayout/update', 'superadmin'],
+//                        'actions' => ['update', 'set-in-active', 'set-active']
+//                    ],
+//                    [
+//                        'allow' => true,
+//                        'roles' => ['AuPrintLayout/delete', 'superadmin'],
+//                        'actions' => ['delete']
+//                    ],
+//                    [
+//                        'allow' => true,
+//                        'roles' => ['AuPrintLayout/view', 'superadmin'],
+//                        'actions' => ['view']
+//                    ],
+//                ]
+//            ]
         ];
     }
 
