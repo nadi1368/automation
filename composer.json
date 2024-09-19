@@ -22,13 +22,13 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=8.0",
-        "hesabro/helpers": "^1.0",
-        "hesabro/change-log": "^1.0",
-        "hesabro/error-log": "^1.0",
+        "hesabro/helpers": "*",
+        "hesabro/change-log": "*",
+        "hesabro/error-log": "*",
         "yiisoft/yii2": "~2.0.14",
         "yiisoft/yii2-bootstrap4": "^2.0",
         "yii2tech/ar-softdelete": "*",
-        "guzzlehttp/guzzle": "^7.9",
+        "guzzlehttp/guzzle": "*",
         "yiisoft/yii2-queue": "^2.3"
     },
     "require-dev": {
