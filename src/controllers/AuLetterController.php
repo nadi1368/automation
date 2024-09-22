@@ -71,37 +71,37 @@ class AuLetterController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
-//            'access' => [
-//                'class' => AccessControl::className(),
-//                'rules' =>
-//                    [
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuLetter/index', 'superadmin'],
-//                            'actions' => ['index']
-//                        ],
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuLetter/create', 'superadmin'],
-//                            'actions' => ['create', 'confirm-and-send', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive']
-//                        ],
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuLetter/update', 'superadmin'],
-//                            'actions' => ['update']
-//                        ],
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuLetter/delete', 'superadmin'],
-//                            'actions' => ['delete']
-//                        ],
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuLetter/view', 'superadmin'],
-//                            'actions' => ['view', 'print']
-//                        ],
-//                    ]
-//            ]
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' =>
+                    [
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-letter/index'],
+                            'actions' => ['index']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-letter/create'],
+                            'actions' => ['create', 'confirm-and-send', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-letter/update'],
+                            'actions' => ['update']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-letter/delete'],
+                            'actions' => ['delete']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-letter/view'],
+                            'actions' => ['view', 'print']
+                        ],
+                    ]
+            ]
         ];
     }
 
@@ -132,7 +132,7 @@ class AuLetterController extends Controller
         $this->layout = 'print';
         $model = $this->findModel($id);
         $printLayout = $print_id ? $this->findModelPrint($print_id) : (new AuPrintLayout());
-        return $this->render('print', [
+        return $this->render('/au-letter/print', [
             'model' => $model,
             'printLayout' => $printLayout,
         ]);

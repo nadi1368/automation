@@ -64,13 +64,14 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
     <div class="card-body">
-        <?= GridView::widget(['dataProvider' => $dataProvider,
+        <?= GridView::widget([
+                'dataProvider' => $dataProvider,
             //'filterModel' => $searchModel,
             'rowOptions' => function (AuLetter $model, $index, $widget, $grid) {
                 if (!$model->viewed) {
                     return ['class' => 'warning font-bold', 'data-id' => $model->id];
                 }
-                return '';
+                return ['data-id' => $model->id];
             },
             'columns' => [['class' => 'yii\grid\SerialColumn'],
 

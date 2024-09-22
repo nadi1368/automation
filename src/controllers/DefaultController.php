@@ -22,22 +22,22 @@ class DefaultController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
             ],
-//            'access' => [
-//                'class' => AccessControl::className(),
-//                'rules' =>
-//                    [
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['automation/index', 'superadmin'],
-//                            'actions' => ['index']
-//                        ],
-//                    ]
-//            ]
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' =>
+                    [
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/default/index'],
+                            'actions' => ['index']
+                        ],
+                    ]
+            ]
         ];
     }
 

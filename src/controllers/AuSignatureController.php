@@ -50,37 +50,37 @@ class AuSignatureController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
-//            'access' => [
-//                'class' => AccessControl::className(),
-//                'rules' =>
-//                    [
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuSignature/index', 'superadmin'],
-//                            'actions' => ['index']
-//                        ],
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuSignature/create', 'superadmin'],
-//                            'actions' => ['create']
-//                        ],
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuSignature/update', 'superadmin'],
-//                            'actions' => ['update', 'set-in-active', 'set-active']
-//                        ],
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuSignature/delete', 'superadmin'],
-//                            'actions' => ['delete']
-//                        ],
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuSignature/view', 'superadmin'],
-//                            'actions' => ['view']
-//                        ],
-//                    ]
-//            ]
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' =>
+                    [
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-signature/index'],
+                            'actions' => ['index']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-signature/create'],
+                            'actions' => ['create']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-signature/update'],
+                            'actions' => ['update', 'set-in-active', 'set-active']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-signature/delete'],
+                            'actions' => ['delete']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-signature/view'],
+                            'actions' => ['view']
+                        ],
+                    ]
+            ]
         ];
     }
 

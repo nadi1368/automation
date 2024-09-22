@@ -1,6 +1,7 @@
 <?php
 
 use hesabro\automation\models\AuPrintLayout;
+use hesabro\automation\Module;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 use hesabro\helpers\widgets\CKEditorWidget;

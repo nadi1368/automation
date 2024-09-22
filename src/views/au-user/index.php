@@ -1,9 +1,10 @@
 <?php
 
 use hesabro\automation\models\AuUser;
+use hesabro\automation\Module;
 use yii\bootstrap4\ButtonDropdown;
 use yii\helpers\Html;
-use common\widgets\grid\GridView;
+use hesabro\helpers\widgets\grid\GridView;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
@@ -34,7 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'data-target' => '#modal-pjax',
                         'data-url' => Url::to(['create']),
                         'data-reload-pjax-container-on-show' => 0,
-                        'data-reload-pjax-container' => 'p-jax-payment-period',
+                        'data-reload-pjax-container' => 'p-jax-au-user',
                     ]); ?>
             </div>
         </div>
@@ -124,7 +125,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             ];
                             $items[] = [
                                 'label' => Html::tag('span', ' ', ['class' => 'fa fa-history']) . ' ' . Module::t('module', 'Log'),
-                                'url' => ['/mongo/log/view-ajax', 'modelId' => $model->id, 'modelClass' => get_class($model)],
+                                'url' => ['/change-log/default/view-ajax', 'modelId' => $model->id, 'modelClass' => hesabro\automation\models\AuUserBase::class],
                                 'encode' => false,
                                 'linkOptions' => [
                                     'title' => Module::t('module', 'Log'),

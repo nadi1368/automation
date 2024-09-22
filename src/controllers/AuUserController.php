@@ -45,42 +45,42 @@ class AuUserController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
-//            'access' => [
-//                'class' => AccessControl::class,
-//                'rules' =>
-//                    [
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuUser/index', 'superadmin'],
-//                            'actions' => ['index']
-//                        ],
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuUser/create', 'superadmin'],
-//                            'actions' => ['create']
-//                        ],
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuUser/update', 'superadmin'],
-//                            'actions' => ['update']
-//                        ],
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuUser/delete', 'superadmin'],
-//                            'actions' => ['delete']
-//                        ],
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuUser/view', 'superadmin'],
-//                            'actions' => ['view']
-//                        ],
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuLetter/create', 'superadmin'],
-//                            'actions' => ['get-user-list']
-//                        ],
-//                    ]
-//            ]
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' =>
+                    [
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-user/index'],
+                            'actions' => ['index']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-user/create'],
+                            'actions' => ['create']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-user/update'],
+                            'actions' => ['update']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-user/delete'],
+                            'actions' => ['delete']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-user/view'],
+                            'actions' => ['view']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-user/index'],
+                            'actions' => ['get-user-list']
+                        ],
+                    ]
+            ]
         ];
     }
 

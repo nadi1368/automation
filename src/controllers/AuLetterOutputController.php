@@ -34,37 +34,37 @@ class AuLetterOutputController extends AuLetterController
                     'delete' => ['POST'],
                 ],
             ],
-//            'access' => [
-//                'class' => AccessControl::className(),
-//                'rules' =>
-//                    [
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuLetter/index', 'superadmin'],
-//                            'actions' => ['index']
-//                        ],
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuLetter/create', 'superadmin'],
-//                            'actions' => ['create', 'confirm-and-send', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive']
-//                        ],
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuLetter/update', 'superadmin'],
-//                            'actions' => ['update']
-//                        ],
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuLetter/delete', 'superadmin'],
-//                            'actions' => ['delete']
-//                        ],
-//                        [
-//                            'allow' => true,
-//                            'roles' => ['AuLetter/view', 'superadmin'],
-//                            'actions' => ['view', 'print']
-//                        ],
-//                    ]
-//            ]
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' =>
+                    [
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-letter-output/index'],
+                            'actions' => ['index']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-letter-output/create'],
+                            'actions' => ['create', 'confirm-and-send', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-letter-output/update'],
+                            'actions' => ['update']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-letter-output/delete'],
+                            'actions' => ['delete']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-letter-output/view'],
+                            'actions' => ['view', 'print']
+                        ],
+                    ]
+            ]
         ];
     }
 
