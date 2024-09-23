@@ -1,6 +1,5 @@
 <?php
 
-namespace hesabro\automation\migrations;
 
 use hesabro\automation\models\AuSignature;
 use yii\db\Migration;

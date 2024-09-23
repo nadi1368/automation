@@ -21,6 +21,8 @@ class Module extends \yii\base\Module
 
     public string | null $user = null;
 
+    public string | null $userFindUrl = null;
+
     public static function t($category, $message, $params = [], $language = null): string
     {
         return Yii::t('hesabro/automation/' . $category, $message, $params, $language);

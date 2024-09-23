@@ -56,28 +56,13 @@ class AuPrintLayoutController extends Controller
                 [
                     [
                         'allow' => true,
-                        'roles' => ['automation/au-print-layout/index'],
-                        'actions' => ['index']
-                    ],
-                    [
-                        'allow' => true,
-                        'roles' => ['automation/au-print-layout/create'],
-                        'actions' => ['create']
-                    ],
-                    [
-                        'allow' => true,
-                        'roles' => ['automation/au-print-layout/update'],
-                        'actions' => ['update', 'set-in-active', 'set-active']
-                    ],
-                    [
-                        'allow' => true,
-                        'roles' => ['automation/au-print-layout/delete'],
-                        'actions' => ['delete']
-                    ],
-                    [
-                        'allow' => true,
                         'roles' => ['automation/au-print-layout/view'],
-                        'actions' => ['view']
+                        'actions' => ['index', 'view']
+                    ],
+                    [
+                        'allow' => true,
+                        'roles' => ['automation/au-print-layout/action'],
+                        'actions' => ['create', 'update', 'set-in-active', 'set-active', 'delete']
                     ],
                 ]
             ]

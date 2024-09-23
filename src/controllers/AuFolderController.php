@@ -60,28 +60,13 @@ class AuFolderController extends Controller
                     [
                         [
                             'allow' => true,
-                            'roles' => ['automation/au-folder/index'],
-                            'actions' => ['index']
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['automation/au-folder/create'],
-                            'actions' => ['create']
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['automation/au-folder/update'],
-                            'actions' => ['update', 'set-in-active', 'set-active']
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['automation/au-folder/delete'],
-                            'actions' => ['delete']
-                        ],
-                        [
-                            'allow' => true,
                             'roles' => ['automation/au-folder/view'],
-                            'actions' => ['view']
+                            'actions' => ['index', 'view']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-folder/action'],
+                            'actions' => ['create', 'update', 'set-in-active', 'set-active', 'delete']
                         ],
                     ]
             ]

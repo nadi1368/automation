@@ -40,28 +40,13 @@ class AuLetterOutputController extends AuLetterController
                     [
                         [
                             'allow' => true,
-                            'roles' => ['automation/au-letter-output/index'],
-                            'actions' => ['index']
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['automation/au-letter-output/create'],
-                            'actions' => ['create', 'confirm-and-send', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive']
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['automation/au-letter-output/update'],
-                            'actions' => ['update']
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['automation/au-letter-output/delete'],
-                            'actions' => ['delete']
-                        ],
-                        [
-                            'allow' => true,
                             'roles' => ['automation/au-letter-output/view'],
-                            'actions' => ['view', 'print']
+                            'actions' => ['index', 'view', 'print']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-letter-output/action'],
+                            'actions' => ['create', 'confirm-and-send', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive', 'update', 'delete']
                         ],
                     ]
             ]

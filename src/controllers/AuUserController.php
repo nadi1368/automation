@@ -51,32 +51,17 @@ class AuUserController extends Controller
                     [
                         [
                             'allow' => true,
-                            'roles' => ['automation/au-user/index'],
-                            'actions' => ['index']
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['automation/au-user/create'],
-                            'actions' => ['create']
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['automation/au-user/update'],
-                            'actions' => ['update']
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['automation/au-user/delete'],
-                            'actions' => ['delete']
-                        ],
-                        [
-                            'allow' => true,
                             'roles' => ['automation/au-user/view'],
-                            'actions' => ['view']
+                            'actions' => ['index', 'view']
                         ],
                         [
                             'allow' => true,
-                            'roles' => ['automation/au-user/index'],
+                            'roles' => ['automation/au-user/action'],
+                            'actions' => ['create', 'update', 'delete']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-letter-output/action', 'automation/au-letter-internal/action', 'automation/au-letter-input/action', 'automation/au-letter/action'],
                             'actions' => ['get-user-list']
                         ],
                     ]

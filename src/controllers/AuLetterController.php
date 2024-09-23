@@ -77,28 +77,13 @@ class AuLetterController extends Controller
                     [
                         [
                             'allow' => true,
-                            'roles' => ['automation/au-letter/index'],
-                            'actions' => ['index']
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['automation/au-letter/create'],
-                            'actions' => ['create', 'confirm-and-send', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive']
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['automation/au-letter/update'],
-                            'actions' => ['update']
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['automation/au-letter/delete'],
-                            'actions' => ['delete']
-                        ],
-                        [
-                            'allow' => true,
                             'roles' => ['automation/au-letter/view'],
-                            'actions' => ['view', 'print']
+                            'actions' => ['index', 'view', 'print']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-letter/action'],
+                            'actions' => ['create', 'confirm-and-send', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive', 'update', 'delete']
                         ],
                     ]
             ]
