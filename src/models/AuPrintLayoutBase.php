@@ -92,7 +92,7 @@ class AuPrintLayoutBase extends \yii\db\ActiveRecord implements StorageModel
             [['headerText', 'footerText', 'fontTitle', 'fontCCRecipients'], 'string'],
             [['showTitleHeader'], 'boolean'],
             [['title'], 'string', 'max' => 64],
-            ['logo', 'file', 'extensions' => ['jpg', 'jpeg', 'png', 'svg'], 'mimeTypes' => ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'], 'maxSize' => 1 * 1024 * 1024, 'on' => [self::SCENARIO_CREATE, self::SCENARIO_UPDATE]],
+            ['logo', 'file', 'extensions' => ['jpg', 'jpeg', 'png', 'svg'], 'mimeTypes' => ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'], 'maxSize' => 4 * 1024 * 1024, 'on' => [self::SCENARIO_CREATE, self::SCENARIO_UPDATE]],
         ];
     }
 
