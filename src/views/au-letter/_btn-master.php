@@ -1,5 +1,6 @@
 <?php
 
+use hesabro\automation\models\AuLetter;
 use hesabro\automation\models\AuPrintLayout;
 use hesabro\automation\models\AuSignature;
 use hesabro\automation\Module;
@@ -115,4 +116,23 @@ endforeach;
         'items' => $itemsSignature,
     ],
 ]) : '' ?>
+<?= Html::a('نسخه برداری',
+    [
+        AuLetter::itemAlias('TypeControllers', $model->type) . '/create', 'copy_id' => $model->id, 'type' => $model->type == AuLetter::TYPE_OUTPUT && $model->input_type == AuLetter::INPUT_OUTPUT_SYSTEM ? AuLetter::INPUT_OUTPUT_SYSTEM : null
+    ],
+    [
+        'class' => 'btn btn-secondary mr-1 ',
+        'title' => 'نسخه برداری از متن این نامه برای ایجاد نامه جدید',
+    ]
+);
+?>
+<?= Html::a(Yii::t('app', 'Log'),
+    ['/mongo/log/view-ajax', 'modelId' => $model->id, 'modelClass' => AuLetter::class],
+    [
+        'class' => 'btn btn-secondary showModalButton mr-1 ',
+        'title' => Yii::t('app', 'Logs'),
+        'data-size' => 'modal-xl'
+    ]
+);
+?>
 

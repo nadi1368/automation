@@ -258,6 +258,10 @@ class AuLetterBase extends \yii\db\ActiveRecord
 
     public function canUpdate()
     {
+        if (in_array($this->type, [self::TYPE_INPUT, self::TYPE_OUTPUT]) && $this->input_type != self::INPUT_OUTPUT_SYSTEM && $this->created_at > strtotime("-3 DAY")) {
+            // نامه های صادره و وارده که سیستمی نیستند تا 3 روز بعد قابل بروز رسانی می باشند
+            return true;
+        }
         return $this->status == self::STATUS_DRAFT;
     }
 
@@ -666,6 +670,19 @@ class AuLetterBase extends \yii\db\ActiveRecord
     }
 
     /**
+     * @param $skipIfSet
+     * @return AuLetter
+     */
+    public function loadDefaultValues($skipIfSet = true)
+    {
+        $copyId = Yii::$app->request->get('copy_id');
+        if ($copyId && ($copyModel = self::findOne($copyId)) !== null) {
+            $this->body = $copyModel->body;
+        }
+        return parent::loadDefaultValues($skipIfSet);
+    }
+
+    /**
      * @param $insert
      * @return bool
      */
@@ -710,6 +727,11 @@ class AuLetterBase extends \yii\db\ActiveRecord
                 self::STATUS_DRAFT => 'پیش نویس',
                 self::STATUS_CONFIRM_AND_SEND => 'ارسال',
                 self::STATUS_WAIT_CONFIRM => 'در انتظار تایید',
+            ],
+            'StatusClass' => [
+                self::STATUS_DRAFT => 'secondary',
+                self::STATUS_CONFIRM_AND_SEND => 'success',
+                self::STATUS_WAIT_CONFIRM => 'info',
             ],
             'InputType' => [
                 self::INPUT_OUTPUT_SYSTEM => 'سیستمی',

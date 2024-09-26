@@ -56,7 +56,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'status',
                     'value' => function (AuLetter $model) {
-                        return AuLetter::itemAlias('Status', $model->status);
+                        return Html::tag('label',AuLetter::itemAlias('Status', $model->status), ['class' => 'badge badge-' . AuLetter::itemAlias('StatusClass', $model->status)]);
                     },
                     'format' => 'raw',
                 ],

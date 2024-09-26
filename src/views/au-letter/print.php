@@ -48,7 +48,6 @@ $this->title = $model->title;
             <td>
                 <!--*** CONTENT GOES HERE ***-->
                 <div class="page">
-                    <b style="font-family:<?= $printLayout->fontTitle ?>;"><?= 'موضوع: ' . Html::encode($model->title) ?></b>
                     <div>
                         <?= nl2br((string)$model->body) ?>
                     </div>

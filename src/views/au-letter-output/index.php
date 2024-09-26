@@ -64,13 +64,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'status',
                     'value' => function (AuLetter $model) {
-                        return AuLetter::itemAlias('Status', $model->status);
+                        return Html::tag('label',AuLetter::itemAlias('Status', $model->status), ['class' => 'badge badge-' . AuLetter::itemAlias('StatusClass', $model->status)]);
                     },
                     'format' => 'raw',
                 ],
                 [
                     'class' => 'common\widgets\grid\ActionColumn',
-                    'template' => '{view}'
+                    'template' =>'{view}{copy}',
+                    'buttons' => [
+                        'copy' => function ($url, AuLetter $model, $key) {
+                            return Html::a('<span class="far fa-copy text-info"></span>', [AuLetter::itemAlias('TypeControllers', $model->type).'/create', 'copy_id' => $model->id], [
+                                'title' => 'نسخه برداری از متن این نامه برای ایجاد نامه جدید',
+                                'class' => 'target'
+                            ]);
+                        },
+                    ]
                 ],
             ],
         ]); ?>
