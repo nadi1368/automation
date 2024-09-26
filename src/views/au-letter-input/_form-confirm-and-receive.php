@@ -71,7 +71,7 @@ $userClass = Module::getInstance()->user;
         </div>
     </div>
     <div class="card-footer">
-        <?= Html::submitButton($model->isNewRecord ? Module::t('module', 'Create') : Module::t('module', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?= Html::submitButton(Module::t('module', 'Confirm'), ['class' => 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
