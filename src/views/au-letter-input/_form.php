@@ -37,7 +37,7 @@ $userClass = Module::getInstance()->user;
                     'pluginOptions' => [
                         'allowClear' => true
                     ],
-                ])->label($model->getAttributeLabel('folder_id') . Html::a('<span class="ti-plus"></span>',
+                ])->label($model->getAttributeLabel('folder_id') . Html::a('<span class="fa fa-plus"></span>',
                         'javascript:void(0)', [
                             'title' => Module::t('module', 'Create') . ' ' . $model->getAttributeLabel('folder_id'),
                             'id' => 'create-au-folder',
@@ -80,7 +80,7 @@ $userClass = Module::getInstance()->user;
                         'templateResult' => new JsExpression('function(user) { return user.text_show; }'),
                         'templateSelection' => new JsExpression('function (user) { return user.text; }'),
                     ],
-                ])->label($model->getAttributeLabel('sender_id') . Html::a('<span class="ti-plus"></span>',
+                ])->label($model->getAttributeLabel('sender_id') . Html::a('<span class="fa fa-plus"></span>',
                         'javascript:void(0)', [
                             'title' => Module::t('module', 'Create') . ' ' . $model->getAttributeLabel('sender_id'),
                             'id' => 'create-au-folder',
@@ -104,7 +104,7 @@ $userClass = Module::getInstance()->user;
             </div>
             <div class="col-md-12">
                 <?= $form->field($model, 'recipients')->widget(Select2::class, [
-                    'data' => $userClass::getUserWithRoles(['employee']),
+                    'data' => $userClass::getUserWithRoles(Module::getInstance()->employeeRole),
                     'options' => [
                         'dir' => 'rtl',
                         'multiple' => true

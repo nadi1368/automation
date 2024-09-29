@@ -20,6 +20,7 @@ use yii\widgets\Pjax;
 
 $clientClass = Module::getInstance()->client;
 $userClass = Module::getInstance()->user;
+$settingsClass = Module::getInstance()->settings;
 ?>
 
 <div class="au-letter-form">
@@ -39,7 +40,7 @@ $userClass = Module::getInstance()->user;
                     'pluginOptions' => [
                         'allowClear' => true
                     ],
-                ])->label($model->getAttributeLabel('folder_id') . Html::a('<span class="ti-plus"></span>',
+                ])->label($model->getAttributeLabel('folder_id') . Html::a('<span class="fa fa-plus"></span>',
                         'javascript:void(0)', [
                             'title' => Module::t('module', 'Create') . ' ' . $model->getAttributeLabel('folder_id'),
                             'id' => 'create-au-folder',
@@ -59,7 +60,7 @@ $userClass = Module::getInstance()->user;
             </div>
             <div class="col-md-4">
                 <?= $form->field($model, 'sender_id')->widget(Select2::class, [
-                    'data' => $userClass::getUserWithRoles(['employee']),
+                    'data' => $userClass::getUserWithRoles(Module::getInstance()->employeeRole),
                     'options' => [
                         'placeholder' => '',
                         'dir' => 'rtl',
@@ -77,9 +78,11 @@ $userClass = Module::getInstance()->user;
                     ]); ?>
                 </div>
             <?php else: ?>
+            <?php if ($settingsClass::get('automation_output_show_field_type_output')): ?>
                 <div class="col-md-4">
                     <?= $form->field($model, 'input_type')->dropdownList(AuLetter::itemAlias('InputTypeCreate'), ['prompt' => Module::t('module', 'Select')]) ?>
                 </div>
+            <?php endif; ?>
                 <div class="col-md-12">
                     <?= $form->field($model, 'recipients')->widget(Select2::class, [
                         'initValueText' => $model->recipients && is_array($model->recipients) ? ArrayHelper::map(AuUser::find()->andWhere(['IN', 'id', $model->recipients])->all(), "id", "fullName") : [],

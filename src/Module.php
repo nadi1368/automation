@@ -21,7 +21,11 @@ class Module extends \yii\base\Module
 
     public string | null $user = null;
 
-    public string | null $userFindUrl = null;
+    public string | null $settings = null;
+
+    public string | null $userFindUrl = '/user/get-user-list';
+
+    public string | null $employeeRole = 'employee';
 
     public static function t($category, $message, $params = [], $language = null): string
     {

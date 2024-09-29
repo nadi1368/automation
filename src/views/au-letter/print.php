@@ -12,10 +12,18 @@ $this->title = $model->title;
     <div class="page-header">
         <div class="row">
             <div class="col-3 text-right" style="padding-right: 40px;">
-                <?= $printLayout->getLogoImgForPrint() ?>
+                <?php if ($model->canPrintWithSenderLayout()): ?>
+                    <?= $printLayout->getLogoClientImgForPrint() ?>
+                <?php else: ?>
+                    <?= $printLayout->getLogoImgForPrint() ?>
+                <?php endif; ?>
             </div>
             <div class="col-6">
-                <?= ($printLayout->headerText) ?>
+                <?php if ($model->canPrintWithSenderLayout()): ?>
+                    <?= $model->header_text; ?>
+                <?php else: ?>
+                    <?= ($printLayout->headerText) ?>
+                <?php endif; ?>
             </div>
             <?php if($printLayout->showTitleHeader): ?>
                 <div class="col-3 text-left" style="padding-left: 40px;">
@@ -77,7 +85,13 @@ $this->title = $model->title;
     </table>
 
 
-    <div class="page-footer"><?= $printLayout->footerText ?></div>
+    <div class="page-footer">
+        <?php if ($model->canPrintWithSenderLayout()): ?>
+            <?= $model->footer_text; ?>
+        <?php else: ?>
+            <?= ($printLayout->footerText) ?>
+        <?php endif; ?>
+    </div>
 <?php
 $sizePrint=AuPrintLayout::itemAlias('Size',$printLayout->size);
 $logoHeight=($printLayout->headerHeight*0.9);

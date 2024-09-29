@@ -86,6 +86,8 @@ class AuLetterBase extends \yii\db\ActiveRecord
     public $attaches; // فایل های پیوست
     public $signatures;
     public $files_text;
+    public $header_text = '';
+    public $footer_text = '';
     // ----------------------------
 
     private $_viewd = null;
@@ -108,7 +110,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
             [['parent_id', 'sender_id', 'type', 'folder_id', 'number', 'input_type', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'slave_id'], 'integer'],
             [['type', 'title', 'folder_id', 'date', 'recipients'], 'required', 'on' => self::SCENARIO_CREATE_INTERNAL],
             [['type', 'title', 'folder_id', 'date', 'recipients', 'sender_id', 'input_type'], 'required', 'on' => self::SCENARIO_CREATE_INPUT],
-            [['type', 'title', 'folder_id', 'date', 'sender_id', 'recipients', 'input_type'], 'required', 'on' => self::SCENARIO_CREATE_OUTPUT],
+            [['type', 'title', 'folder_id', 'date', 'sender_id', 'recipients'], 'required', 'on' => self::SCENARIO_CREATE_OUTPUT],
             [['folder_id', 'recipients'], 'required', 'on' => self::SCENARIO_CONFIRM_AND_RECEIVE_INPUT],
             [['recipients', 'cc_recipients'], 'safe', 'on' => [self::SCENARIO_CREATE_INTERNAL, self::SCENARIO_CREATE_OUTPUT, self::SCENARIO_CONFIRM_AND_RECEIVE_INPUT]],
             [['body'], 'string'],
@@ -273,6 +275,11 @@ class AuLetterBase extends \yii\db\ActiveRecord
     public function canConfirmAndSend()
     {
         return $this->status == self::STATUS_DRAFT;
+    }
+
+    public function canPrintWithSenderLayout()
+    {
+        return $this->type == self::TYPE_INPUT && $this->input_type == self::INPUT_OUTPUT_SYSTEM;
     }
 
     public function canPrint()
@@ -677,6 +684,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
     {
         $copyId = Yii::$app->request->get('copy_id');
         if ($copyId && ($copyModel = self::findOne($copyId)) !== null) {
+            $this->title = $copyModel->title;
             $this->body = $copyModel->body;
         }
         return parent::loadDefaultValues($skipIfSet);
@@ -792,6 +800,8 @@ class AuLetterBase extends \yii\db\ActiveRecord
                     'signatures' => 'Any',
                     'attaches' => 'Any',
                     'files_text' => 'String',
+                    'header_text' => 'String',
+                    'footer_text' => 'String',
                 ],
             ],
             'softDeleteBehavior' => [

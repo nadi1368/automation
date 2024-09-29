@@ -33,7 +33,7 @@ $userClass = Module::getInstance()->user;
             </div>
             <div class="col-md-12">
                 <?= $form->field($model, 'recipients')->widget(Select2::class, [
-                    'data' => $userClass::getUserWithRoles(['employee']),
+                    'data' => $userClass::getUserWithRoles(Module::getInstance()->employeeRole),
                     'options' => [
                         'dir' => 'rtl',
                         'multiple' => true

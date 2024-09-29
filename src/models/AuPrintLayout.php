@@ -5,6 +5,7 @@ namespace hesabro\automation\models;
 use backend\modules\storage\behaviors\StorageUploadBehavior;
 use backend\modules\storage\models\StorageFiles;
 use common\behaviors\CdnUploadFileBehavior;
+use yii\helpers\Html;
 
 class AuPrintLayout extends AuPrintLayoutBase
 {
@@ -36,5 +37,16 @@ class AuPrintLayout extends AuPrintLayoutBase
 
     public function getStorageFileUrl(string $attribute) {
         return $this->getFileUrl($attribute);
+    }
+
+
+    /**
+     * @param int $width
+     * @param int $height
+     * @return string
+     */
+    public function getLogoClientImgForPrint(): string
+    {
+        return Html::img(Yii::$app->client->identity->getCdnPhotoUrl('photo_file'), ['width' => '100px']);
     }
 }

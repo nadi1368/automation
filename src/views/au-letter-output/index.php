@@ -73,7 +73,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'template' =>'{view}{copy}',
                     'buttons' => [
                         'copy' => function ($url, AuLetter $model, $key) {
-                            return Html::a('<span class="far fa-copy text-info"></span>', [AuLetter::itemAlias('TypeControllers', $model->type).'/create', 'copy_id' => $model->id], [
+                            return Html::a('<span class="far fa-copy text-info"></span>', [AuLetter::itemAlias('TypeControllers', $model->type) . '/create', 'copy_id' => $model->id, 'type' => $model->input_type == AuLetter::INPUT_OUTPUT_SYSTEM ? AuLetter::INPUT_OUTPUT_SYSTEM : null], [
                                 'title' => 'نسخه برداری از متن این نامه برای ایجاد نامه جدید',
                                 'class' => 'target'
                             ]);
