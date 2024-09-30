@@ -2,7 +2,7 @@
 
 namespace hesabro\automation\components;
 
-
+use Yii;
 use hesabro\automation\Module;
 
 /**

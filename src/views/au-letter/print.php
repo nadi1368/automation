@@ -57,7 +57,7 @@ $this->title = $model->title;
                 <!--*** CONTENT GOES HERE ***-->
                 <div class="page">
                     <div>
-                        <?= nl2br((string)$model->body) ?>
+                        <?= (string)$model->body ?>
                     </div>
                     <div class="<?= AuPrintLayout::itemAlias('TextAlign',$printLayout->signaturePosition) ?>">
                         <?= $this->render('_signatures', [

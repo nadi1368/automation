@@ -60,12 +60,12 @@ class AuFolderController extends Controller
                     [
                         [
                             'allow' => true,
-                            'roles' => ['automation/au-folder/view'],
+                            'roles' => ['automation/au-folder/view', 'superadmin'],
                             'actions' => ['index', 'view']
                         ],
                         [
                             'allow' => true,
-                            'roles' => ['automation/au-folder/action'],
+                            'roles' => ['automation/au-folder/action', 'superadmin'],
                             'actions' => ['create', 'update', 'set-in-active', 'set-active', 'delete']
                         ],
                     ]

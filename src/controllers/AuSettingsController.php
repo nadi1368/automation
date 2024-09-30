@@ -32,7 +32,7 @@ class AuSettingsController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'roles' => ['settings-account/index', 'setting/index'],
+                        'roles' => ['settings-account/index', 'setting/index', 'superadmin'],
                     ],
                 ]
             ]

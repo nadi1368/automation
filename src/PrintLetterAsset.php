@@ -10,11 +10,11 @@ use yii\web\AssetBundle;
  */
 class PrintLetterAsset extends AssetBundle
 {
-    public $sourcePath = '@hesabro/automation';
+    public $sourcePath = '@hesabro/automation/assets';
 
     public $css = [
-        'assets/fonts/IRANSans/style.css',
-        'assets/css/print.letter.css',
+        'fonts/IRANSans/style.css',
+        'css/print.letter.css',
     ];
     public $js = [
     ];

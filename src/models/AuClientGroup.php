@@ -64,16 +64,16 @@ class AuClientGroup extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Module::t('app', 'ID'),
-            'title' => Module::t('app', 'Title'),
-            'additional_data' => Module::t('app', 'Additional Data'),
-            'status' => Module::t('app', 'Status'),
-            'created_at' => Module::t('app', 'Created At'),
-            'created_by' => Module::t('app', 'Created By'),
-            'updated_at' => Module::t('app', 'Updated At'),
-            'updated_by' => Module::t('app', 'Updated By'),
-            'deleted_at' => Module::t('app', 'Deleted At'),
-            'slave_id' => Module::t('app', 'Slave ID'),
+            'id' => Module::t('module', 'ID'),
+            'title' => Module::t('module', 'Title'),
+            'additional_data' => Module::t('module', 'Additional Data'),
+            'status' => Module::t('module', 'Status'),
+            'created_at' => Module::t('module', 'Created At'),
+            'created_by' => Module::t('module', 'Created By'),
+            'updated_at' => Module::t('module', 'Updated At'),
+            'updated_by' => Module::t('module', 'Updated By'),
+            'deleted_at' => Module::t('module', 'Deleted At'),
+            'slave_id' => Module::t('module', 'Slave ID'),
             'clients' => 'اعضا',
         ];
     }

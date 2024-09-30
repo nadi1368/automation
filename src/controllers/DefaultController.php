@@ -33,7 +33,7 @@ class DefaultController extends Controller
                     [
                         [
                             'allow' => true,
-                            'roles' => ['automation/default/index'],
+                            'roles' => ['automation/default/index', 'superadmin'],
                             'actions' => ['index']
                         ],
                     ]

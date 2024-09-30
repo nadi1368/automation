@@ -1,13 +1,13 @@
 <?php
 
-use backend\modules\automation\models\AuClientGroup;
+use hesabro\automation\models\AuClientGroup;
 use yii\bootstrap4\ButtonDropdown;
 use yii\helpers\Html;
 use common\widgets\grid\GridView;
 use yii\helpers\Url;
 
 /* @var $this yii\web\View */
-/* @var $searchModel backend\modules\automation\models\AuClientGroupSearch */
+/* @var $searchModel hesabro\automation\models\AuClientGroupSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'گروه بندی اعضا';
@@ -58,6 +58,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'clients',
                     'value' => function (AuClientGroup $model) {
                         return $model->showClients;
+                    },
+                    'format' => 'raw',
+                ],
+                [
+                    'attribute' => 'status',
+                    'value' => function (AuClientGroup $model) {
+                        return Yii::$app->helper::itemAlias('YesOrNoIcon', $model->status);
                     },
                     'format' => 'raw',
                 ],
