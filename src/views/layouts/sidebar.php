@@ -45,20 +45,20 @@ return [
             [
                 'label' => 'تنظیمات',
                 'icon' => 'far fa-layer-group',
-                'url' => ['/automation/au-settings/index'],
+                'url' => ["/$moduleId/au-settings/index"],
                 'group' => 'GeneralInfo',
             ],
             [
                 'label' => 'اعضا',
                 'icon' => 'far fa-layer-group',
-                'url' => ['/automation/au-client/index'],
+                'url' => ["/$moduleId/au-client/index"],
                 'group' => 'GeneralInfo',
                 'visible' => Module::getInstance()->client && Yii::$app->client->identity->master
             ],
             [
                 'label' => 'گروه بندی اعضا',
                 'icon' => 'far fa-layer-group',
-                'url' => ['/automation/au-client-group/index'],
+                'url' => ["/$moduleId/au-client-group/index"],
                 'group' => 'GeneralInfo',
                 'visible' => Module::getInstance()->client && Yii::$app->client->identity->master
             ],

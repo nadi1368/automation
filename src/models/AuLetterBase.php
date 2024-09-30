@@ -362,7 +362,22 @@ class AuLetterBase extends \yii\db\ActiveRecord
      */
     public function createRecipientsOutput(): bool
     {
+        $recipients = [];
         foreach (is_array($this->recipients) ? $this->recipients : [] as $clientId) {
+            if (str_contains($clientId, 'g_')) {
+                [, $auClientGroupId] = explode('g_', $clientId);
+                if (($auClientGroup = AuClientGroup::findOne((int)$auClientGroupId)) !== null) {
+                    foreach (is_array($auClientGroup->clients) ? $auClientGroup->clients : [] as $clientIdFromGroup) {
+                        if (!in_array($clientIdFromGroup, $recipients)) {
+                            $recipients[] = (int)$clientIdFromGroup;
+                        }
+                    }
+                }
+            } elseif (!in_array($clientId, $recipients)) {
+                $recipients[] = (int)$clientId;
+            }
+        }
+        foreach ($recipients as $clientId) {
             $auLetterClient = new AuLetterClient(['type' => AuLetterUser::TYPE_RECIPIENTS]);
             $auLetterClient->title = 'گیرنده نامه';
             $auLetterClient->letter_id = $this->id;
@@ -436,8 +451,24 @@ class AuLetterBase extends \yii\db\ActiveRecord
     public function updateRecipientsOutput($old_recipients): bool
     {
 
-        $this->recipients = is_array($this->recipients) ? $this->recipients : [];
-        $deleted_recipients_ids = array_diff($old_recipients, $this->recipients);
+        $recipients = [];
+        foreach (is_array($this->recipients) ? $this->recipients : [] as $clientId) {
+            if (str_contains($clientId, 'g_')) {
+                [, $auClientGroupId] = explode('g_', $clientId);
+                if (($auClientGroup = AuClientGroup::findOne((int)$auClientGroupId)) !== null) {
+                    foreach (is_array($auClientGroup->clients) ? $auClientGroup->clients : [] as $clientIdFromGroup) {
+                        if (!in_array($clientIdFromGroup, $recipients)) {
+                            $recipients[] = (int)$clientIdFromGroup;
+                        }
+                    }
+                }
+            } elseif (!in_array($clientId, $recipients)) {
+                $recipients[] = (int)$clientId;
+            }
+        }
+
+
+        $deleted_recipients_ids = array_diff($old_recipients, $recipients);
         if (!empty($deleted_recipients_ids)) {
             foreach ($deleted_recipients_ids as $userId) {
                 if (($model = AuLetterClient::find()->andWhere(['client_id' => $userId, 'letter_id' => $this->id, 'type' => AuLetterClient::TYPE_RECIPIENTS])->limit(1)->one()) !== null && !$model->softDelete()) {
@@ -445,7 +476,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
                 }
             }
         }
-        foreach (array_diff($this->recipients, $old_recipients) as $userId) {
+        foreach (array_diff($recipients, $old_recipients) as $userId) {
             $auLetterUser = new AuLetterClient(['type' => AuLetterClient::TYPE_RECIPIENTS]);
             $auLetterUser->title = 'گیرنده نامه';
             $auLetterUser->letter_id = $this->id;

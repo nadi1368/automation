@@ -1,8 +1,7 @@
 <?php
 
-use common\models\ClientSettingsValue;
-use common\models\Settings;
 use common\widgets\grid\GridView;
+use hesabro\automation\Module;
 use kartik\select2\Select2;
 use yii\bootstrap4\ButtonDropdown;
 use yii\helpers\Html;
@@ -16,7 +15,7 @@ use yii\widgets\Pjax;
 $this->title = 'تنظیمات';
 $this->params['breadcrumbs'][] = $this->title;
 
-
+$settingsClass=Module::getInstance()->settings;
 $styles = <<<CSS
     .row-content-wrapper {
         max-width: 300px;
@@ -54,55 +53,11 @@ function wrapContent($content)
                 'title',
                 [
                     'attribute' => 'value',
-                    'value' => function (Settings $model) {
-
-                        if ($model->field == "boolean") {
-                            if ($model->client_value == 1) {
-                                return '<span class="text-success"><i class="ti-check"></i></span>';
-                            } else {
-                                return '<span class="text-danger"><i class="ti-close"></i></span>';
-                            }
-                        } elseif ($model->field == "item") {
-                            return wrapContent($model->client_value ? $model->client_value . ' - ' . Settings::itemAlias($model->alias, $model->client_value) : '');
-                        } elseif ($model->field == "itemMultiple") {
-                            $items = Settings::itemAlias($model->alias);
-                            $values = strpos((string)$model->client_value, ',') ? explode(',', (string)$model->client_value) : [$model->client_value];
-                            $return = '';
-                            if ($values) {
-                                foreach ($values as $value) {
-                                    if ($value) {
-                                        $return .= '<span class="badge badge-info">' . $items[$value] . '</span> ';
-                                    }
-                                }
-                            }
-
-                            return $return;
-                        } elseif ($model->field == 'image') {
-                            return Html::img($model->getFileUrl('photo'), ['width' => '180px']);
-                        } elseif ($model->field == "select2" && $model->client_value) {
-                            return wrapContent($model->client_value . ' - ' . Settings::itemAlias('AliasValue', $model->alias, $model->client_value));
-                        } else {
-                            if ($model->field == 'number' && is_numeric($model->client_value)) {
-                                $model->client_value = number_format((float)$model->client_value);
-                            }
-                            return wrapContent(
-                                Html::a('<i class="fa fa-copy"></i>', 'javascript:void(0)', [
-                                    'title' => 'کپی',
-                                    'class' => 'js-copy-to-clipboard text-info',
-                                    'data-content' => $model->client_value
-                                ]) . ' ' . strip_tags((string)$model->client_value)
-                            );
-                        }
+                    'value' => function ($model) {
+                        return $model->getVal();
                     },
                     'format' => 'raw'
                 ],
-                //                [
-                //                    'attribute' => 'alias',
-                //                    'value' => function ($model) {
-                //                        return $model->alias ? Settings::itemAlias('Alias', $model->alias) : '';
-                //                    },
-                //                    'filter' => Settings::itemAlias('Alias')
-                //                ],
                 [
                     'class' => 'common\widgets\grid\ActionColumn',
                     'contentOptions' => ['style' => 'width:auto;text-align:center;'],
@@ -127,7 +82,7 @@ function wrapContent($content)
                             ];
                             $items[] = [
                                 'label' => Yii::t('app', 'Log'),
-                                'url' => ['/mongo/log/view-ajax', 'modelClass' => ClientSettingsValue::class, 'modelId' => $model->id],
+                                'url' => ['/mongo/log/view-ajax', 'modelClass' => Module::getInstance()->clientSettingsValue, 'modelId' => $model->id],
                                 'linkOptions' => [
                                     'data-size' => 'modal-xl',
                                     'class' => 'showModalButton',

@@ -1,6 +1,6 @@
 <?php
 
-namespace backend\modules\automation\controllers;
+namespace hesabro\automation\controllers;
 
 use Yii;
 use hesabro\automation\Module;
@@ -20,36 +20,19 @@ use yii\web\Response;
 class AuSettingsController extends Controller
 {
     use AjaxValidationTrait;
+
     /**
      * @inheritdoc
      */
     public function behaviors()
     {
         return [
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
             'access' => [
                 'class' => AccessControl::class,
                 'rules' => [
-
                     [
                         'allow' => true,
-                        'roles' => ['setting/index'],
-                        'actions' => ['create', 'update', 'index-field']
-                    ],
-                    [
-                        'allow' => true,
-                        'roles' => ['setting/create'],
-                        'actions' => ['index']
-                    ],
-                    [
-                        'allow' => true,
-                        'roles' => ['setting/create'],
-                        'actions' => ['change-value', 'modify-group']
+                        'roles' => ['settings-account/index', 'setting/index'],
                     ],
                 ]
             ]
@@ -61,7 +44,8 @@ class AuSettingsController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new (Module::getInstance()->settingsSearch(['status' => Module::getInstance()->settings::STATUS_ACTIVE]));
+        $searchModel = new (Module::getInstance()->settingsSearch);
+        $searchModel->status = Module::getInstance()->settings::STATUS_ACTIVE;
         $searchModel->category = Module::getInstance()->settingsCategory;
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -101,7 +85,7 @@ class AuSettingsController extends Controller
                 }
             } catch (\Exception $e) {
                 $transaction->rollBack();
-                Yii::error($e->getMessage() . $e->getTraceAsString(), Yii::$app->controller->id.'/'.Yii::$app->controller->action->id);
+                Yii::error($e->getMessage() . $e->getTraceAsString(), Yii::$app->controller->id . '/' . Yii::$app->controller->action->id);
             }
             return $this->asJson($result);
         } else {
@@ -115,6 +99,7 @@ class AuSettingsController extends Controller
             'model' => $model,
         ]);
     }
+
     /**
      * Finds the Settings model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.

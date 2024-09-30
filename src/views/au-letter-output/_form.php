@@ -1,5 +1,6 @@
 <?php
 
+use hesabro\automation\models\AuClientGroup;
 use hesabro\automation\models\AuLetter;
 use hesabro\automation\models\AuUser;
 use hesabro\automation\Module;
@@ -70,7 +71,7 @@ $settingsClass = Module::getInstance()->settings;
             <?php if ($clientClass && $model->input_type == AuLetter::INPUT_OUTPUT_SYSTEM): ?>
                 <div class="col-md-12">
                     <?= $form->field($model, 'recipients')->widget(Select2::class, [
-                        'data' => $clientClass::itemAlias('ParentBranches'),
+                        'data' => AuClientGroup::getClientList(),
                         'options' => [
                             'dir' => 'rtl',
                             'multiple' => true
