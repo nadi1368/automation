@@ -23,6 +23,10 @@ class Module extends \yii\base\Module
 
     public string | null $settings = null;
 
+    public string | null $settingsSearch = null;
+
+    public string | null $settingsCategory = null;
+
     public string | null $userFindUrl = '/user/get-user-list';
 
     public string | null $employeeRole = 'employee';
