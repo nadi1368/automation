@@ -72,7 +72,7 @@ class AuPrintLayoutBase extends \yii\db\ActiveRecord implements StorageModel
     public ?bool $showBorderHeader = true;
     public ?bool $showBorderFooter = true;
     public ?string $orderTitle = 'number,date,attach';
-    public ?float $marginTitleBetween =  0.1;
+    public ?float $marginTitleBetween = 0.1;
     public ?float $marginTitleLeft = 1;
 
     /**
@@ -89,11 +89,10 @@ class AuPrintLayoutBase extends \yii\db\ActiveRecord implements StorageModel
     public function rules()
     {
         return [
-            [['additional_data'], 'safe'],
+            [['title'], 'required', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_UPDATE]],
             [['status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'slave_id', 'signaturePosition', 'size'], 'integer'],
             [['headerHeight', 'footerHeight', 'marginTop', 'marginRight', 'marginBottom', 'marginLeft', 'marginTitleBetween', 'marginTitleLeft'], 'number'],
-            [['title'], 'required', 'on' => self::SCENARIO_CREATE],
-            [['title'], 'required', 'on' => self::SCENARIO_UPDATE],
+            [['headerHeight', 'footerHeight', 'marginTop', 'marginRight', 'marginBottom', 'marginLeft', 'marginTitleBetween', 'marginTitleLeft', 'signaturePosition', 'size'], 'required', 'on' => [self::SCENARIO_CREATE, self::SCENARIO_UPDATE]],
             [['headerText', 'footerText', 'fontTitle', 'fontCCRecipients', 'orderTitle'], 'string'],
             [['showTitleHeader', 'showBorderHeader', 'showBorderFooter'], 'boolean'],
             [['title'], 'string', 'max' => 64],
@@ -286,21 +285,21 @@ class AuPrintLayoutBase extends \yii\db\ActiveRecord implements StorageModel
 
     public function getTitleHtml($letter)
     {
-        if (str_contains((string)$this->orderTitle,',')) {
+        if (str_contains((string)$this->orderTitle, ',')) {
             $explodeTitle = explode(',', $this->orderTitle);
         } else {
             $explodeTitle = explode(',', 'number,date,attach');
         }
 
-        $html = '<div class="col-3 text-left" style="padding-left: '.((int)$this->marginTitleLeft).'cm;">';
+        $html = '<div class="col-3 text-left" style="padding-left: ' . ((int)$this->marginTitleLeft) . 'cm;">';
         if ($this->showTitleHeader) {
             $html .= '<div><b class="float-right">' . self::itemAlias('OrderTitleLabel', $explodeTitle[0]) . '</b>' . Html::encode($letter->{self::itemAlias('OrderTitleValue', $explodeTitle[0])}) . '</div>';
-            $html .= '<div style="margin-top: '.((int)$this->marginTitleBetween).'cm;"><b class="float-right">' . self::itemAlias('OrderTitleLabel', $explodeTitle[1]) . '</b>' . Html::encode($letter->{self::itemAlias('OrderTitleValue', $explodeTitle[1])}) . '</div>';
-            $html .= '<div style="margin-top: '.((int)$this->marginTitleBetween).'cm;"><b class="float-right">' . self::itemAlias('OrderTitleLabel', $explodeTitle[2]) . '</b>' . Html::encode($letter->{self::itemAlias('OrderTitleValue', $explodeTitle[2])}) . '</div>';
+            $html .= '<div style="margin-top: ' . ((int)$this->marginTitleBetween) . 'cm;"><b class="float-right">' . self::itemAlias('OrderTitleLabel', $explodeTitle[1]) . '</b>' . Html::encode($letter->{self::itemAlias('OrderTitleValue', $explodeTitle[1])}) . '</div>';
+            $html .= '<div style="margin-top: ' . ((int)$this->marginTitleBetween) . 'cm;"><b class="float-right">' . self::itemAlias('OrderTitleLabel', $explodeTitle[2]) . '</b>' . Html::encode($letter->{self::itemAlias('OrderTitleValue', $explodeTitle[2])}) . '</div>';
         } else {
             $html .= '<div>' . Html::encode($letter->{self::itemAlias('OrderTitleValue', $explodeTitle[0])}) . '</div>';
-            $html .= '<div style="margin-top: '.((int)$this->marginTitleBetween).'cm;">' . Html::encode($letter->{self::itemAlias('OrderTitleValue', $explodeTitle[1])}) . '</div>';
-            $html .= '<div style="margin-top: '.((int)$this->marginTitleBetween).'cm;">' . Html::encode($letter->{self::itemAlias('OrderTitleValue', $explodeTitle[2])}) . '</div>';
+            $html .= '<div style="margin-top: ' . ((int)$this->marginTitleBetween) . 'cm;">' . Html::encode($letter->{self::itemAlias('OrderTitleValue', $explodeTitle[1])}) . '</div>';
+            $html .= '<div style="margin-top: ' . ((int)$this->marginTitleBetween) . 'cm;">' . Html::encode($letter->{self::itemAlias('OrderTitleValue', $explodeTitle[2])}) . '</div>';
         }
         $html .= '</div>';
         return $html;
@@ -372,15 +371,18 @@ class AuPrintLayoutBase extends \yii\db\ActiveRecord implements StorageModel
         ];
     }
 
-    public function getStorageFileContent(string $attribute) {
+    public function getStorageFileContent(string $attribute)
+    {
         return $this->getStorageFile($attribute)->one()?->getFileContent();
     }
 
-    public function getStorageFileName(string $attribute) {
+    public function getStorageFileName(string $attribute)
+    {
         return $this->getFileStorageName($attribute);
     }
 
-    public function getStorageFileUrl(string $attribute) {
+    public function getStorageFileUrl(string $attribute)
+    {
         return $this->getFileUrl($attribute);
     }
 }
