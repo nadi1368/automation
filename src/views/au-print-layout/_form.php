@@ -64,6 +64,12 @@ use hesabro\helpers\widgets\CKEditorWidget;
                 <?= $form->field($model, 'marginLeft')->textInput() ?>
             </div>
             <div class="col-md-2">
+                <?= $form->field($model, 'marginTitleBetween')->textInput() ?>
+            </div>
+            <div class="col-md-2">
+                <?= $form->field($model, 'marginTitleLeft')->textInput() ?>
+            </div>
+            <div class="col-md-2">
                 <?= $form->field($model, 'signaturePosition')->dropdownList(AuPrintLayout::itemAlias('TextAlignTitle')) ?>
             </div>
             <div class="col-md-2">
@@ -71,13 +77,23 @@ use hesabro\helpers\widgets\CKEditorWidget;
             </div>
 
             <div class="col-md-2">
-                <?= $form->field($model, 'fontTitle')->dropdownList(AuPrintLayout::itemAlias('Fonts'), ['prompt'=>Module::t('module','Select')]) ?>
+                <?= $form->field($model, 'fontTitle')->dropdownList(AuPrintLayout::itemAlias('Fonts'), ['prompt'=>Yii::t('app','Select')]) ?>
             </div>
             <div class="col-md-2">
-                <?= $form->field($model, 'fontCCRecipients')->dropdownList(AuPrintLayout::itemAlias('Fonts'), ['prompt'=>Module::t('module','Select')]) ?>
+                <?= $form->field($model, 'fontCCRecipients')->dropdownList(AuPrintLayout::itemAlias('Fonts'), ['prompt'=>Yii::t('app','Select')]) ?>
             </div>
+            <div class="col-md-2">
+                <?= $form->field($model, 'orderTitle')->dropdownList(AuPrintLayout::itemAlias('OrderTitle'), ['prompt'=>Yii::t('app','Select')]) ?>
+            </div>
+            <div class="col-md-12"></div>
             <div class="col-md-4">
                 <?= $form->field($model, 'showTitleHeader')->checkbox() ?>
+            </div>
+            <div class="col-md-4">
+                <?= $form->field($model, 'showBorderHeader')->checkbox() ?>
+            </div>
+            <div class="col-md-4">
+                <?= $form->field($model, 'showBorderFooter')->checkbox() ?>
             </div>
 
 
