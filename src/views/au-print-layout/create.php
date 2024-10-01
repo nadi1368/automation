@@ -7,7 +7,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model hesabro\automation\models\AuPrintLayout */
 
-$this->title = Module::t('module', 'Create Au Print Layout');
+$this->title = Module::t('module', 'Create');
 $this->params['breadcrumbs'][] = ['label' => Module::t('module', 'Au Print Layouts'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

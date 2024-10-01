@@ -25,19 +25,7 @@ $this->title = $model->title;
                     <?= ($printLayout->headerText) ?>
                 <?php endif; ?>
             </div>
-            <?php if($printLayout->showTitleHeader): ?>
-                <div class="col-3 text-left" style="padding-left: 40px;">
-                    <p><b class="float-right">شماره :</b> <?= Html::encode($model->printNumber); ?></p>
-                    <p><b class="float-right">تاریخ :</b> <?= Html::encode($model->date) ?></p>
-                    <p><b class="float-right">پیوست :</b> <?= ($countAttach = $model->countAttach()) > 0 ? $countAttach : '' ?></p>
-                </div>
-            <?php else: ?>
-                <div class="col-3 text-left" style="padding-left: 40px;">
-                    <p><?= Html::encode($model->printNumber); ?></p>
-                    <p><?= Html::encode($model->date) ?></p>
-                    <p><?= ($countAttach = $model->countAttach()) > 0 ? $countAttach : '' ?></p>
-                </div>
-            <?php endif; ?>
+            <?= $printLayout->getTitleHtml($model) ?>
         </div>
         <br>
     </div>
@@ -93,8 +81,11 @@ $this->title = $model->title;
         <?php endif; ?>
     </div>
 <?php
-$sizePrint=AuPrintLayout::itemAlias('Size',$printLayout->size);
-$logoHeight=($printLayout->headerHeight*0.9);
+$sizePrint = AuPrintLayout::itemAlias('Size', $printLayout->size);
+$logoHeight = ($printLayout->headerHeight * 0.9);
+$showBorderHeader=(int)$printLayout->showBorderHeader;
+$showBorderFooter=(int)$printLayout->showBorderFooter;
+
 $css = <<< CSS
 
 .page-header, .page-header-space {
@@ -117,14 +108,14 @@ $css = <<< CSS
     bottom: 0;
     width: 100%;
     padding-top: 10px;
-    border-top: 1px solid black; /* for demo */
+    border-top: {$showBorderFooter}px solid black; /* for demo */
 }
 
 .page-header {
     position: fixed;
     top: 0;
     width: 100%;
-    border-bottom: 1px solid black; /* for demo */
+    border-bottom: {$showBorderHeader}px solid black; /* for demo */
 }
 .page {
 }

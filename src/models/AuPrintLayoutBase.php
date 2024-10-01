@@ -69,6 +69,11 @@ class AuPrintLayoutBase extends \yii\db\ActiveRecord implements StorageModel
     public ?bool $showTitleHeader = true;
     public ?string $fontTitle = '';
     public ?string $fontCCRecipients = '';
+    public ?bool $showBorderHeader = true;
+    public ?bool $showBorderFooter = true;
+    public ?string $orderTitle = 'number,date,attach';
+    public ?float $marginTitleBetween =  0.1;
+    public ?float $marginTitleLeft = 1;
 
     /**
      * {@inheritdoc}
@@ -86,11 +91,11 @@ class AuPrintLayoutBase extends \yii\db\ActiveRecord implements StorageModel
         return [
             [['additional_data'], 'safe'],
             [['status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'slave_id', 'signaturePosition', 'size'], 'integer'],
-            [['headerHeight', 'footerHeight', 'marginTop', 'marginRight', 'marginBottom', 'marginLeft'], 'number'],
+            [['headerHeight', 'footerHeight', 'marginTop', 'marginRight', 'marginBottom', 'marginLeft', 'marginTitleBetween', 'marginTitleLeft'], 'number'],
             [['title'], 'required', 'on' => self::SCENARIO_CREATE],
             [['title'], 'required', 'on' => self::SCENARIO_UPDATE],
-            [['headerText', 'footerText', 'fontTitle', 'fontCCRecipients'], 'string'],
-            [['showTitleHeader'], 'boolean'],
+            [['headerText', 'footerText', 'fontTitle', 'fontCCRecipients', 'orderTitle'], 'string'],
+            [['showTitleHeader', 'showBorderHeader', 'showBorderFooter'], 'boolean'],
             [['title'], 'string', 'max' => 64],
             ['logo', 'file', 'extensions' => ['jpg', 'jpeg', 'png', 'svg'], 'mimeTypes' => ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'], 'maxSize' => 4 * 1024 * 1024, 'on' => [self::SCENARIO_CREATE, self::SCENARIO_UPDATE]],
         ];
@@ -126,6 +131,11 @@ class AuPrintLayoutBase extends \yii\db\ActiveRecord implements StorageModel
             'showTitleHeader' => 'نمایش عنوان (شماره,تاریخ,پیوست) در هدر',
             'fontTitle' => 'فونت عنوان',
             'fontCCRecipients' => 'فونت رونوشت',
+            'showBorderHeader' => 'نمایش خط افقی هدر',
+            'showBorderFooter' => 'نمایش خط افقی فوتر',
+            'orderTitle' => 'ترتیب نمایش',
+            'marginTitleBetween' => 'فاصله بین خطوط عنوان (شماره,تاریخ,پیوست) (سانتی متر)',
+            'marginTitleLeft' => 'فاصله عنوان (شماره,تاریخ,پیوست) از چپ (سانتی متر)'
         ];
     }
 
@@ -249,11 +259,51 @@ class AuPrintLayoutBase extends \yii\db\ActiveRecord implements StorageModel
                     self::FONT_nazanin => 'نازنین',
                     self::FONT_IRANNASTALIQ => 'نستعلیق',
                 ],
+            'OrderTitle' => [
+                'number,date,attach' => 'شماره - تاریخ - پیوست',
+                'number,attach,date' => 'شماره - پیوست - تاریخ',
+                'date,number,attach' => 'تاریخ - شماره - پیوست',
+                'date,attach,number' => 'تاریخ - پیوست - شماره',
+                'attach,number,date' => 'پیوست - شماره - تاریخ',
+                'attach,date,number' => 'پیوست - تاریخ - شماره',
+            ],
+            'OrderTitleValue' => [
+                'number' => 'printNumber',
+                'date' => 'date',
+                'attach' => 'printCountAttach',
+            ],
+            'OrderTitleLabel' => [
+                'number' => 'شماره :',
+                'date' => 'تاریخ :',
+                'attach' => 'پیوست :',
+            ],
         ];
         if (isset($code))
             return isset($_items[$type][$code]) ? $_items[$type][$code] : false;
         else
             return isset($_items[$type]) ? $_items[$type] : false;
+    }
+
+    public function getTitleHtml($letter)
+    {
+        if (str_contains((string)$this->orderTitle,',')) {
+            $explodeTitle = explode(',', $this->orderTitle);
+        } else {
+            $explodeTitle = explode(',', 'number,date,attach');
+        }
+
+        $html = '<div class="col-3 text-left" style="padding-left: '.((int)$this->marginTitleLeft).'cm;">';
+        if ($this->showTitleHeader) {
+            $html .= '<div><b class="float-right">' . self::itemAlias('OrderTitleLabel', $explodeTitle[0]) . '</b>' . Html::encode($letter->{self::itemAlias('OrderTitleValue', $explodeTitle[0])}) . '</div>';
+            $html .= '<div style="margin-top: '.((int)$this->marginTitleBetween).'cm;"><b class="float-right">' . self::itemAlias('OrderTitleLabel', $explodeTitle[1]) . '</b>' . Html::encode($letter->{self::itemAlias('OrderTitleValue', $explodeTitle[1])}) . '</div>';
+            $html .= '<div style="margin-top: '.((int)$this->marginTitleBetween).'cm;"><b class="float-right">' . self::itemAlias('OrderTitleLabel', $explodeTitle[2]) . '</b>' . Html::encode($letter->{self::itemAlias('OrderTitleValue', $explodeTitle[2])}) . '</div>';
+        } else {
+            $html .= '<div>' . Html::encode($letter->{self::itemAlias('OrderTitleValue', $explodeTitle[0])}) . '</div>';
+            $html .= '<div style="margin-top: '.((int)$this->marginTitleBetween).'cm;">' . Html::encode($letter->{self::itemAlias('OrderTitleValue', $explodeTitle[1])}) . '</div>';
+            $html .= '<div style="margin-top: '.((int)$this->marginTitleBetween).'cm;">' . Html::encode($letter->{self::itemAlias('OrderTitleValue', $explodeTitle[2])}) . '</div>';
+        }
+        $html .= '</div>';
+        return $html;
     }
 
     public function behaviors()
@@ -296,6 +346,11 @@ class AuPrintLayoutBase extends \yii\db\ActiveRecord implements StorageModel
                     'showTitleHeader' => 'Boolean',
                     'fontTitle' => 'String',
                     'fontCCRecipients' => 'String',
+                    'showBorderHeader' => 'Boolean',
+                    'showBorderFooter' => 'Boolean',
+                    'orderTitle' => 'String',
+                    'marginTitleBetween' => 'Float',
+                    'marginTitleLeft' => 'Float',
                 ],
             ],
             'softDeleteBehavior' => [

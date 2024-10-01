@@ -159,6 +159,7 @@ class AuFolderController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $model->setScenario(AuFolder::SCENARIO_UPDATE);
         if (!$model->canUpdate()) {
             throw new BadRequestHttpException($model->error_msg ?: Module::t('module', "It is not possible to perform this operation"));
         }

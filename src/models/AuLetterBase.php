@@ -49,6 +49,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property object $creator
  * @property object $update
  * @property string $printNumber
+ * @property string $printCountAttach
  * @property bool $viewed
  */
 class AuLetterBase extends \yii\db\ActiveRecord
@@ -335,6 +336,14 @@ class AuLetterBase extends \yii\db\ActiveRecord
     public function countAttach(): int
     {
         return (int)$this->getActivity()->andWhere([AuLetterActivity::tableName() . '.type' => AuLetterActivity::TYPE_ATTACH])->count();
+    }
+
+    /**
+     * @return int|string
+     */
+    public function getPrintCountAttach()
+    {
+        return ($countAttach = $this->countAttach()) > 0 ? $countAttach : '';
     }
 
     /**

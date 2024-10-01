@@ -146,7 +146,7 @@ class AuFolderBase extends \yii\db\ActiveRecord
      */
     public function canUpdate()
     {
-        return $this->last_number == $this->start_number;
+        return !$this->getLetters()->exists();
     }
 
     /**
@@ -154,7 +154,7 @@ class AuFolderBase extends \yii\db\ActiveRecord
      */
     public function canDelete()
     {
-        return $this->last_number == $this->start_number;
+        return !$this->getLetters()->exists();
     }
 
 
@@ -192,7 +192,6 @@ class AuFolderBase extends \yii\db\ActiveRecord
         if ($this->isNewRecord) {
             $this->status = self::STATUS_ACTIVE;
         }
-
         if (in_array($this->scenario, [self::SCENARIO_CREATE, self::SCENARIO_UPDATE])) {
             $this->last_number = $this->start_number;
         }
