@@ -2,10 +2,7 @@
 
 namespace hesabro\automation;
 
-use hesabro\automation\controllers\AuFolderController;
-use hesabro\automation\events\AuFolderEvent;
 use Yii;
-use hesabro\helpers\Module as HesabroHelpersModule;
 use yii\i18n\PhpMessageSource;
 
 /**

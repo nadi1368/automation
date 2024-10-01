@@ -65,14 +65,14 @@ class AutomationMenuItems
                         'icon' => 'far fa-layer-group',
                         'url' => ["/$moduleId/au-client/index"],
                         'group' => 'GeneralInfo',
-                        'visible' => Module::getInstance()->client && Yii::$app->client->identity->master
+                        'visible' => Module::getInstance()?->client && Yii::$app->client->identity->master
                     ],
                     [
                         'label' => 'گروه بندی اعضا',
                         'icon' => 'far fa-layer-group',
                         'url' => ["/$moduleId/au-client-group/index"],
                         'group' => 'GeneralInfo',
-                        'visible' => Module::getInstance()->client && Yii::$app->client->identity->master
+                        'visible' => Module::getInstance()?->client && Yii::$app->client->identity->master
                     ],
                 ]
             ],
