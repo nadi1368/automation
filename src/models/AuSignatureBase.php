@@ -63,7 +63,7 @@ class AuSignatureBase extends ActiveRecord implements StorageModel
             [['status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'slave_id', 'user_id'], 'integer'],
             [['title'], 'required', 'on' => [self::SCENARIO_UPDATE]],
             [['title'], 'string', 'max' => 64],
-            [['user_id'], 'unique'],
+            [['user_id'], 'unique', 'message'=>'برای این کاربر قبلا در سیستم امضا ثبت شده است.لطفا امضا قبلی را ویرایش نمایید.'],
             [['users_other'], 'each', 'rule' => ['integer']],
             ['signature', 'file', 'extensions' => ['jpg', 'jpeg', 'png', 'svg'], 'mimeTypes' => ['image/png', 'image/jpg', 'image/jpeg', 'image/svg+xml'], 'maxSize' => 1 * 1024 * 1024, 'on' => [self::SCENARIO_CREATE, self::SCENARIO_UPDATE]],
             [['user_id'], 'exist', 'targetClass' => Module::getInstance()->user, 'targetAttribute' => ['user_id' => 'id']],

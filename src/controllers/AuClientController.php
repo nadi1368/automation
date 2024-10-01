@@ -12,7 +12,7 @@ use yii\web\NotFoundHttpException;
 
 /**
  * Class AuClientController
- * @package backend\modules\automation\controllers
+ * @package hesabro\automation\controllers
  * @author Nader <nader.bahadorii@gmail.com>
  */
 class AuClientController extends Controller

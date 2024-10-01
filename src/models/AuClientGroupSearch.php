@@ -7,7 +7,7 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * AuClientGroupSearch represents the model behind the search form of `backend\modules\automation\models\AuClientGroup`.
+ * AuClientGroupSearch represents the model behind the search form of `hesabro\automation\models\AuClientGroup`.
  */
 class AuClientGroupSearch extends AuClientGroup
 {

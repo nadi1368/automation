@@ -3,6 +3,7 @@
 namespace hesabro\automation\controllers;
 
 use Yii;
+use hesabro\automation\Module;
 use hesabro\automation\models\AuClientGroup;
 use hesabro\automation\models\AuClientGroupSearch;
 use yii\web\BadRequestHttpException;
@@ -73,7 +74,7 @@ class AuClientGroupController extends Controller
         $model = new AuClientGroup();
         $result = [
             'success' => false,
-            'msg' => Yii::t("app", "Error In Save Info")
+            'msg' => Module::t('module', "Error In Save Info")
         ];
         if ($this->request->isPost) {
             if ($model->load(Yii::$app->request->post()) && $model->validate()) {
@@ -83,7 +84,7 @@ class AuClientGroupController extends Controller
                     if ($flag) {
                         $result = [
                             'success' => true,
-                            'msg' => Yii::t("app", "Item Created")
+                            'msg' => Module::t('module', "Item Created")
                         ];
                         $transaction->commit();
                     } else {
@@ -115,11 +116,11 @@ class AuClientGroupController extends Controller
         $model = $this->findModel($id);
         if(!$model->canUpdate())
         {
-            throw new BadRequestHttpException(Yii::t("app", "It is not possible to perform this operation"));
+            throw new BadRequestHttpException(Module::t('module', "It is not possible to perform this operation"));
         }
         $result = [
             'success' => false,
-            'msg' => Yii::t("app", "Error In Save Info")
+            'msg' => Module::t('module', "Error In Save Info")
         ];
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $transaction = Yii::$app->db->beginTransaction();
@@ -128,7 +129,7 @@ class AuClientGroupController extends Controller
                 if ($flag) {
                     $result = [
                         'success' => true,
-                        'msg' => Yii::t("app", "Item Updated")
+                        'msg' => Module::t('module', "Item Updated")
                     ];
                     $transaction->commit();
                 } else {
@@ -164,13 +165,13 @@ class AuClientGroupController extends Controller
                     $transaction->commit();
                     $result = [
                         'status' => true,
-                        'message' => Yii::t("app", "Item Updated")
+                        'message' => Module::t('module', "Item Updated")
                     ];
                 } else {
                     $transaction->rollBack();
                     $result = [
                         'status' => false,
-                        'message' => Yii::t("app", "Error In Save Info")
+                        'message' => Module::t('module', "Error In Save Info")
                     ];
                 }
             } catch (\Exception $e) {
@@ -184,7 +185,7 @@ class AuClientGroupController extends Controller
         } else {
             $result = [
                 'status' => false,
-                'message' => Yii::t("app", "It is not possible to perform this operation")
+                'message' => Module::t('module', "It is not possible to perform this operation")
             ];
         }
         return $this->asJson($result);
@@ -207,13 +208,13 @@ class AuClientGroupController extends Controller
                     $transaction->commit();
                     $result = [
                         'status' => true,
-                        'message' => Yii::t("app", "Item Updated")
+                        'message' => Module::t('module', "Item Updated")
                     ];
                 } else {
                     $transaction->rollBack();
                     $result = [
                         'status' => false,
-                        'message' => Yii::t("app", "Error In Save Info")
+                        'message' => Module::t('module', "Error In Save Info")
                     ];
                 }
             } catch (\Exception $e) {
@@ -227,7 +228,7 @@ class AuClientGroupController extends Controller
         } else {
             $result = [
                 'status' => false,
-                'message' => Yii::t("app", "It is not possible to perform this operation")
+                'message' => Module::t('module', "It is not possible to perform this operation")
             ];
         }
 
@@ -248,7 +249,7 @@ class AuClientGroupController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+        throw new NotFoundHttpException(Module::t('module', 'The requested page does not exist.'));
     }
 
     public function flash($type, $message)

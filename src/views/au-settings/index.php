@@ -66,12 +66,12 @@ function wrapContent($content)
                         'group' => function ($url, $model, $key) {
                             $items = [];
                             $items[] = [
-                                'label' => Yii::t('app', 'Update'),
+                                'label' => Module::t('module', 'Update'),
                                 'url' => 'javascript:void(0)',
                                 'linkOptions' => [
                                     'id' => 'update-setting-' . $key,
                                     'data-size' => 'modal-lg',
-                                    'data-title' => Yii::t('app', 'Update'),
+                                    'data-title' => Module::t('module', 'Update'),
                                     'data-toggle' => 'modal',
                                     'data-target' => '#modal-pjax',
                                     'data-url' => Url::to(['change-value', 'id' => $key]),
@@ -81,16 +81,16 @@ function wrapContent($content)
                                 ]
                             ];
                             $items[] = [
-                                'label' => Yii::t('app', 'Log'),
+                                'label' => Module::t('module', 'Log'),
                                 'url' => ['/mongo/log/view-ajax', 'modelClass' => Module::getInstance()->clientSettingsValue, 'modelId' => $model->id],
                                 'linkOptions' => [
                                     'data-size' => 'modal-xl',
                                     'class' => 'showModalButton',
-                                    'title' => Yii::t('app', 'Log')
+                                    'title' => Module::t('module', 'Log')
                                 ],
                             ];
                             return ButtonDropdown::widget([
-                                'buttonOptions' => ['class' => 'btn btn-info btn-md dropdown-toggle', 'style' => 'padding: 3px 7px !important;', 'title' => Yii::t('app', 'Actions')],
+                                'buttonOptions' => ['class' => 'btn btn-info btn-md dropdown-toggle', 'style' => 'padding: 3px 7px !important;', 'title' => Module::t('module', 'Actions')],
                                 'encodeLabel' => false,
                                 'label' => '<i class="far fa-list mr-1"></i>',
                                 'dropdown' => [

@@ -2,10 +2,17 @@
 
 namespace hesabro\automation\models;
 
+use Yii;
 use common\behaviors\SendAutoCommentsBehavior;
 use common\models\CommentsType;
 use yii\helpers\Html;
 
+
+/**
+ * Class AuLetter
+ * @package hesabro\automation\models
+ * @author Nader <nader.bahadorii@gmail.com>
+ */
 class AuLetter extends AuLetterBase
 {
     public function behaviors()

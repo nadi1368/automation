@@ -126,11 +126,11 @@ endforeach;
     ]
 );
 ?>
-<?= Html::a(Yii::t('app', 'Log'),
+<?= Html::a(Module::t('module', 'Log'),
     ['/mongo/log/view-ajax', 'modelId' => $model->id, 'modelClass' => AuLetter::class],
     [
         'class' => 'btn btn-secondary showModalButton mr-1 ',
-        'title' => Yii::t('app', 'Logs'),
+        'title' => Module::t('module', 'Logs'),
         'data-size' => 'modal-xl'
     ]
 );

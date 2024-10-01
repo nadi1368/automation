@@ -1,10 +1,11 @@
 <?php
 
+use hesabro\automation\Module;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model backend\modules\automation\models\AuClientGroupSearch */
+/* @var $model hesabro\automation\models\AuClientGroupSearch */
 /* @var $form yii\bootstrap4\ActiveForm */
 ?>
 
@@ -37,8 +38,8 @@ use yii\bootstrap4\ActiveForm;
     <?php // echo $form->field($model, 'slave_id') ?>
 
 		<div class="col align-self-center text-right">
-			<?= Html::submitButton(Yii::t('app', 'Search'), ['class' => 'btn btn-primary']) ?>
-			<?= Html::resetButton(Yii::t('app', 'Reset'), ['class' => 'btn btn-secondary']) ?>
+			<?= Html::submitButton(Module::t('module', 'Search'), ['class' => 'btn btn-primary']) ?>
+			<?= Html::resetButton(Module::t('module', 'Reset'), ['class' => 'btn btn-secondary']) ?>
 		</div>
 	</div>
 </div>

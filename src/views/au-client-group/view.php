@@ -2,12 +2,13 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use hesabro\automation\Module;
 
 /* @var $this yii\web\View */
-/* @var $model backend\modules\automation\models\AuClientGroup */
+/* @var $model hesabro\automation\models\AuClientGroup */
 
 $this->title = $model->title;
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Au Client Groups'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Module::t('module', 'Au Client Groups'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="au-client-group-view card">
@@ -29,11 +30,11 @@ $this->params['breadcrumbs'][] = $this->title;
 	]) ?>
 	</div>
 	<div class="card-footer">
-		<?= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id, 'slave_id' => $model->slave_id], ['class' => 'btn btn-primary']) ?>
-		<?= Html::a(Yii::t('app', 'Delete'), ['delete', 'id' => $model->id, 'slave_id' => $model->slave_id], [
+		<?= Html::a(Module::t('module', 'Update'), ['update', 'id' => $model->id, 'slave_id' => $model->slave_id], ['class' => 'btn btn-primary']) ?>
+		<?= Html::a(Module::t('module', 'Delete'), ['delete', 'id' => $model->id, 'slave_id' => $model->slave_id], [
 		'class' => 'btn btn-danger',
 		'data' => [
-		'confirm' => Yii::t('app', 'Are you sure you want to delete this item?'),
+		'confirm' => Module::t('module', 'Are you sure you want to delete this item?'),
 		'method' => 'post',
 		],
 		]) ?>

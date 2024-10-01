@@ -5,7 +5,6 @@ namespace hesabro\automation\models;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use hesabro\automation\models\AuSignature;
 
 /**
  * AuSignatureSearch represents the model behind the search form of `hesabro\automation\models\AuSignature`.
@@ -47,6 +46,7 @@ class AuSignatureSearch extends AuSignature
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['id' => SORT_DESC]]
         ]);
 
         $this->load($params);

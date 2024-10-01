@@ -1,12 +1,13 @@
 <?php
 
+use hesabro\automation\Module;
 use kartik\select2\Select2;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 use backend\modules\master\models\Client;
 
 /* @var $this yii\web\View */
-/* @var $model backend\modules\automation\models\AuClientGroup */
+/* @var $model hesabro\automation\models\AuClientGroup */
 /* @var $form yii\bootstrap4\ActiveForm */
 ?>
 
@@ -32,7 +33,7 @@ use backend\modules\master\models\Client;
         </div>
     </div>
     <div class="card-footer">
-        <?= Html::submitButton($model->isNewRecord ? Yii::t('app', 'Create') : Yii::t('app', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?= Html::submitButton($model->isNewRecord ? Module::t('module', 'Create') : Module::t('module', 'Update'), ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

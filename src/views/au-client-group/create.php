@@ -1,13 +1,13 @@
 <?php
 
 use yii\helpers\Html;
-
+use hesabro\automation\Module;
 
 /* @var $this yii\web\View */
-/* @var $model backend\modules\automation\models\AuClientGroup */
+/* @var $model hesabro\automation\models\AuClientGroup */
 
-$this->title = Yii::t('app', 'Create Au Client Group');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Au Client Groups'), 'url' => ['index']];
+$this->title = Module::t('module', 'Create Au Client Group');
+$this->params['breadcrumbs'][] = ['label' => Module::t('module', 'Au Client Groups'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="au-client-group-create card">

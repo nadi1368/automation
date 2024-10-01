@@ -10,7 +10,7 @@ use yii\i18n\PhpMessageSource;
 
 /**
  * Class module
- * @package backend\modules\automation
+ * @package hesabro\automation
  * @author Nader <nader.bahadorii@gmail.com>
  */
 class Module extends \yii\base\Module

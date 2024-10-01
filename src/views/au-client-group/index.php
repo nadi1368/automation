@@ -1,5 +1,6 @@
 <?php
 
+use hesabro\automation\Module;
 use hesabro\automation\models\AuClientGroup;
 use yii\bootstrap4\ButtonDropdown;
 use yii\helpers\Html;
@@ -23,10 +24,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 </a>
             </h4>
             <div>
-                <?= Html::a(Yii::t('app', 'Create'),
+                <?= Html::a(Module::t('module', 'Create'),
                     'javascript:void(0)', [
-                        'title' => Yii::t('app', 'Create'),
-                        'data-title' => Yii::t('app', 'Create'),
+                        'title' => Module::t('module', 'Create'),
+                        'data-title' => Module::t('module', 'Create'),
                         'class' => 'btn btn-success',
                         'data-size' => 'modal-lg',
                         'data-toggle' => 'modal',
@@ -78,12 +79,12 @@ $this->params['breadcrumbs'][] = $this->title;
 
                             if($model->canUpdate()) {
                                 $items[] = [
-                                    'label' => Html::tag('span', ' ', ['class' => 'fa fa-pen']) . ' ' . Yii::t('app', 'Update'),
+                                    'label' => Html::tag('span', ' ', ['class' => 'fa fa-pen']) . ' ' . Module::t('module', 'Update'),
                                     'url' => 'javascript:void(0)',
                                     'encode' => false,
                                     'linkOptions' => [
-                                        'title' => Yii::t('app', 'Update'),
-                                        'data-title' => Yii::t('app', 'Update'),
+                                        'title' => Module::t('module', 'Update'),
+                                        'data-title' => Module::t('module', 'Update'),
                                         'data-size' => 'modal-lg',
                                         'data-toggle' => 'modal',
                                         'data-target' => '#modal-pjax',
@@ -96,11 +97,11 @@ $this->params['breadcrumbs'][] = $this->title;
                             if($model->canActive())
                             {
                                 $items[] = [
-                                    'label' =>  Html::tag('span', '', ['class' => 'fa fa-check-circle']) .' '.Yii::t('app', 'Active'),
+                                    'label' =>  Html::tag('span', '', ['class' => 'fa fa-check-circle']) .' '.Module::t('module', 'Active'),
                                     'url' => 'javascript:void(0)',
                                     'encode' => false,
                                     'linkOptions' => [
-                                        'data-confirm-text' => Yii::t('app', 'Are you sure?'),
+                                        'data-confirm-text' => Module::t('module', 'Are you sure?'),
                                         'data-reload-pjax-container' => 'p-jax-au-client-group',
                                         'data-pjax' => '0',
                                         'data-url' => Url::to(['set-active', 'id' => $model->id]),
@@ -112,11 +113,11 @@ $this->params['breadcrumbs'][] = $this->title;
                             if($model->canInActive())
                             {
                                 $items[] = [
-                                    'label' =>  Html::tag('span', '', ['class' => 'fa fa-minus-circle']) .' '.Yii::t('app', 'Inactive'),
+                                    'label' =>  Html::tag('span', '', ['class' => 'fa fa-minus-circle']) .' '.Module::t('module', 'Inactive'),
                                     'url' => 'javascript:void(0)',
                                     'encode' => false,
                                     'linkOptions' => [
-                                        'data-confirm-text' => Yii::t('app', 'Are you sure?'),
+                                        'data-confirm-text' => Module::t('module', 'Are you sure?'),
                                         'data-reload-pjax-container' => 'p-jax-au-client-group',
                                         'data-pjax' => '0',
                                         'data-url' => Url::to(['set-in-active', 'id' => $model->id]),
@@ -126,18 +127,18 @@ $this->params['breadcrumbs'][] = $this->title;
                                 ];
                             }
                             $items[] = [
-                                'label' => Html::tag('span', ' ', ['class' => 'fa fa-history']) .' '. Yii::t('app', 'Log'),
+                                'label' => Html::tag('span', ' ', ['class' => 'fa fa-history']) .' '. Module::t('module', 'Log'),
                                 'url' => ['/mongo/log/view-ajax', 'modelId' => $model->id, 'modelClass' => get_class($model)],
                                 'encode' => false,
                                 'linkOptions' => [
-                                    'title' => Yii::t('app', 'Log'),
+                                    'title' => Module::t('module', 'Log'),
                                     'class' => 'showModalButton',
                                     'data-size' => 'modal-xxl',
                                 ],
                             ];
 
                             return ButtonDropdown::widget([
-                                'buttonOptions' => ['class' => 'btn btn-info btn-md dropdown-toggle', 'style' => 'padding: 3px 7px !important;', 'title' => Yii::t('app', 'Actions')],
+                                'buttonOptions' => ['class' => 'btn btn-info btn-md dropdown-toggle', 'style' => 'padding: 3px 7px !important;', 'title' => Module::t('module', 'Actions')],
                                 'encodeLabel' => false,
                                 'label' => '<i class="far fa-list mr-1"></i>',
                                 'options' => ['class' => 'float-right'],
