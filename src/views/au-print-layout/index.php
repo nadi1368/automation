@@ -58,12 +58,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'format' => 'raw',
                 ],
-                //'created_at',
-                //'created_by',
-                //'updated_at',
-                //'updated_by',
-                //'deleted_at',
-                //'slave_id',
                 [
                     'class' => 'common\widgets\grid\ActionColumn',
                     'contentOptions' => ['style' => 'width:100px;text-align:left;'],
@@ -75,12 +69,12 @@ $this->params['breadcrumbs'][] = $this->title;
                             if ($model->canUpdate()) {
                                 $items[] = [
                                     'label' => Html::tag('span', ' ', ['class' => 'fa fa-pen']) . ' ' . Module::t('module', 'Update'),
-                                    'url' => ['update', 'id' => $key],
+                                    'url' => ['update', 'id' => $model->id],
                                     'encode' => false,
                                     'linkOptions' => [
                                         'title' => Module::t('module', 'Update'),
                                         'data-title' => Module::t('module', 'Update'),
-                                        'data-pjax' => 'false',
+                                        'data-pjax' => '0',
                                     ],
                                 ];
                             }

@@ -111,7 +111,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'template' =>'{view}',
                         'buttons' => [
                             'view' => function ($url,AuLetter  $model, $key) {
-                                return Html::a('<span class="far fa-eye text-info"></span>', [AuLetter::itemAlias('TypeControllers', $model->type).'/view', 'id' => $key], [
+                                return Html::a('<span class="far fa-eye text-info"></span>', [AuLetter::itemAlias('TypeControllers', $model->type).'/view', 'id' => $model->id], [
                                     'title' => Yii::t('yii', 'View'),
                                     'class' => 'target'
                                 ]);

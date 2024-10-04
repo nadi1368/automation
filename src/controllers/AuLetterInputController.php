@@ -114,7 +114,7 @@ class AuLetterInputController extends AuLetterController
                         $this->trigger(self::EVENT_AFTER_CREATE, AuLetterInputEvent::create($model));
                         $transaction->commit();
                         $this->flash('success', Module::t('module', "Item Created"));
-                        return $this->redirect(['view', 'id' => $model->id, 'slave_id' => $model->slave_id]);
+                        return $this->redirect(['view', 'id' => $model->id]);
                     } else {
                         $transaction->rollBack();
                     }

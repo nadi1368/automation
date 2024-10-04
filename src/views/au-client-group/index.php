@@ -88,7 +88,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         'data-size' => 'modal-lg',
                                         'data-toggle' => 'modal',
                                         'data-target' => '#modal-pjax',
-                                        'data-url' => Url::to(['update', 'id' => $key]),
+                                        'data-url' => Url::to(['update', 'id' => $model->id]),
                                         'data-reload-pjax-container-on-show' => 0,
                                         'data-reload-pjax-container' => 'p-jax-au-client-group',
                                     ],

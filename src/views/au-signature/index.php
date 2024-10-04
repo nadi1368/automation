@@ -89,12 +89,12 @@ $this->params['breadcrumbs'][] = $this->title;
                             if ($model->canUpdate()) {
                                 $items[] = [
                                     'label' => Html::tag('span', ' ', ['class' => 'fa fa-pen']) . ' ' . Module::t('module', 'Update'),
-                                    'url' => ['update', 'id' => $key],
+                                    'url' => ['update', 'id' => $model->id],
                                     'encode' => false,
                                     'linkOptions' => [
                                         'title' => Module::t('module', 'Update'),
                                         'data-title' => Module::t('module', 'Update'),
-                                        'data-pjax' => 'false',
+                                        'data-pjax' => '0',
                                     ],
                                 ];
                             }

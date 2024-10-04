@@ -85,6 +85,7 @@ $settingsClass = Module::getInstance()->settings;
                 </div>
             <?php endif; ?>
                 <div class="col-md-12">
+                    <?php Pjax::begin(['id' => 'p-jax-customer-fast-form']) ?>
                     <?= $form->field($model, 'recipients')->widget(Select2::class, [
                         'initValueText' => $model->recipients && is_array($model->recipients) ? ArrayHelper::map(AuUser::find()->andWhere(['IN', 'id', $model->recipients])->all(), "id", "fullName") : [],
                         'options' => ['placeholder' => Module::t('module', "Search"), 'multiple' => true, 'dir' => 'rtl'],
@@ -109,8 +110,21 @@ $settingsClass = Module::getInstance()->settings;
                             'templateResult' => new JsExpression('function(user) { return user.text_show; }'),
                             'templateSelection' => new JsExpression('function (user) { return user.text; }'),
                         ],
-                    ]);
+                    ])->label($model->getAttributeLabel('sender_id') . Html::a('<span class="fa fa-plus"></span>',
+                            'javascript:void(0)', [
+                                'title' => Module::t('module', 'Create') . ' ' . $model->getAttributeLabel('recipients'),
+                                'id' => 'create-au-folder',
+                                'class' => 'btn btn-outline-secondary ml-3 pull-left',
+                                'data-size' => 'modal-xxl',
+                                'data-title' => Module::t('module', 'Create') . ' ' . $model->getAttributeLabel('recipients'),
+                                'data-toggle' => 'modal',
+                                'data-target' => '#modal-pjax',
+                                'data-url' => Url::to(['au-user/create']),
+                                'data-reload-pjax-container-on-show' => 0,
+                                'data-reload-pjax-container' => 'p-jax-customer-fast-form',
+                            ]), ['class' => 'd-block']);
                     ?>
+                    <?php Pjax::end() ?>
                 </div>
             <?php endif; ?>
             <div class="col-md-12">

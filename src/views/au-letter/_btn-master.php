@@ -71,7 +71,7 @@ foreach (AuPrintLayout::find()->justActive()->all() as $print):
         'url' => ['print', 'id' => $model->id, 'print_id' => $print->id],
         'encode' => false,
         'linkOptions' => [
-            'data-pjax' => 'false',
+            'data-pjax' => '0',
         ],
     ];
 endforeach;
@@ -81,7 +81,7 @@ $itemsPrint[] = [
     'url' => ['print', 'id' => $model->id],
     'encode' => false,
     'linkOptions' => [
-        'data-pjax' => 'false',
+        'data-pjax' => '0',
     ],
 ];
 ?>
@@ -102,7 +102,7 @@ foreach (AuSignature::find()->justActive()->all() as $signature):
         'url' => ['signature', 'id' => $model->id, 'signature_id' => $signature->id],
         'encode' => false,
         'linkOptions' => [
-            'data-pjax' => 'false',
+            'data-pjax' => '0',
         ],
     ];
 endforeach;

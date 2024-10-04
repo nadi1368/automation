@@ -91,7 +91,6 @@ class AuFolderController extends Controller
     /**
      * Displays a single AFolder model.
      * @param int $id آیدی
-     * @param int $slave_id Slave ID
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */

@@ -105,7 +105,7 @@ class AuLetterInternalController extends AuLetterController
                         $this->trigger(self::EVENT_AFTER_CREATE, AuLetterInternalEvent::create($model));
                         $transaction->commit();
                         $this->flash('success', Module::t('module', "Item Created"));
-                        return $this->redirect(['view', 'id' => $model->id, 'slave_id' => $model->slave_id]);
+                        return $this->redirect(['view', 'id' => $model->id]);
                     } else {
                         $transaction->rollBack();
                     }
@@ -128,7 +128,6 @@ class AuLetterInternalController extends AuLetterController
      * Updates an existing AuLetter model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id آیدی
-     * @param int $slave_id Slave ID
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */

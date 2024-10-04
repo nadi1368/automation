@@ -123,7 +123,6 @@ class AuSignatureController extends Controller
      * Updates an existing AuSignature model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id آیدی
-     * @param int $slave_id Slave ID
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
