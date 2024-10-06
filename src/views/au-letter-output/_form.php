@@ -110,7 +110,7 @@ $settingsClass = Module::getInstance()->settings;
                             'templateResult' => new JsExpression('function(user) { return user.text_show; }'),
                             'templateSelection' => new JsExpression('function (user) { return user.text; }'),
                         ],
-                    ])->label($model->getAttributeLabel('sender_id') . Html::a('<span class="fa fa-plus"></span>',
+                    ])->label($model->getAttributeLabel('recipients') . Html::a('<span class="fa fa-plus"></span>',
                             'javascript:void(0)', [
                                 'title' => Module::t('module', 'Create') . ' ' . $model->getAttributeLabel('recipients'),
                                 'id' => 'create-au-folder',

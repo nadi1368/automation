@@ -58,4 +58,15 @@ class AuFolderQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['type' => $type]);
     }
+
+    public function findOneSqlForUpdate()
+    {
+        $sql = $this
+            ->createCommand()
+            ->getRawSql();
+
+        Yii::$app->db->enableSlaves = false;
+
+        return AuFolder::findBySql($sql . ' FOR UPDATE ')->one();
+    }
 }
