@@ -26,7 +26,7 @@ class Module extends \yii\base\Module
 
     public string | null $settingsCategory = null;
 
-    public string | null $userFindUrl = '/user/get-user-list';
+    public array | null $userFindUrl = ['/user/get-user-list'];
 
     public array | null $employeeRole = ['employee'];
 

@@ -61,6 +61,12 @@ class AutomationMenuItems
                         'group' => 'GeneralInfo',
                     ],
                     [
+                        'label' => 'گردش کار نامه',
+                        'icon' => 'far fa-layer-group',
+                        'url' => ["/$moduleId/au-work-flow/index"],
+                        'group' => 'GeneralInfo',
+                    ],
+                    [
                         'label' => 'اعضا',
                         'icon' => 'far fa-layer-group',
                         'url' => ["/$moduleId/au-client/index"],
