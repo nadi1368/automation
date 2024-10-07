@@ -96,6 +96,10 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= $this->render('/au-letter/_signatures', [
             'model' => $model,
         ]) ?>
+        <div class="mb-5"></div>
+        <?= $this->render('/au-letter/_steps', [
+            'model' => $model,
+        ]) ?>
     </div>
 </div>
 
