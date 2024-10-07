@@ -46,7 +46,7 @@ class AuLetterOutputController extends AuLetterController
                         [
                             'allow' => true,
                             'roles' => ['automation/au-letter-output/action', 'superadmin'],
-                            'actions' => ['create', 'confirm-and-send', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive', 'update', 'delete']
+                            'actions' => ['create', 'confirm-and-send', 'confirm-and-start-work-flow', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive', 'update', 'delete']
                         ],
                     ]
             ]

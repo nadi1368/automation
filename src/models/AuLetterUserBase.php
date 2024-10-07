@@ -33,6 +33,7 @@ class AuLetterUserBase extends \yii\db\ActiveRecord
     const TYPE_RECIPIENTS = 1; // گیرنده
     const TYPE_CC_RECIPIENTS = 2; // رونوشت
     const TYPE_REFERENCE = 3; // ارجاع
+    const TYPE_WORK_FLOW = 4; // گردش کار
 
     const SCENARIO_CREATE = 'create';
 

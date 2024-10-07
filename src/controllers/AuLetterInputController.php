@@ -56,7 +56,7 @@ class AuLetterInputController extends AuLetterController
                         [
                             'allow' => true,
                             'roles' => ['automation/au-letter-input/action', 'superadmin'],
-                            'actions' => ['create', 'confirm-and-send', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive', 'update', 'delete', 'run-ocr']
+                            'actions' => ['create', 'confirm-and-send', 'confirm-and-start-work-flow', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive', 'update', 'delete', 'run-ocr']
                         ],
                     ]
             ]

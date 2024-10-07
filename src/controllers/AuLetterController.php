@@ -59,6 +59,10 @@ class AuLetterController extends Controller
 
     public const EVENT_AFTER_DELETE = 'afterDelete';
 
+    public const EVENT_BEFORE_CONFIRM_AND_START_WORK_FLOW = 'beforeConfirmAndStartWorkFlow';
+
+    public const EVENT_AFTER_CONFIRM_AND_START_WORK_FLOW = 'afterConfirmAndStartWorkFlow';
+
     /**
      * {@inheritdoc}
      */
@@ -83,7 +87,7 @@ class AuLetterController extends Controller
                         [
                             'allow' => true,
                             'roles' => ['automation/au-letter/action', 'superadmin'],
-                            'actions' => ['create', 'confirm-and-send', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive', 'update', 'delete']
+                            'actions' => ['create', 'confirm-and-send', 'confirm-and-start-work-flow', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive', 'update', 'delete']
                         ],
                     ]
             ]
@@ -174,6 +178,42 @@ class AuLetterController extends Controller
                 $flag = $model->confirmAndSend();
                 if ($flag) {
                     $this->trigger(self::EVENT_AFTER_CONFIRM_AND_SEND, AuLetterEvent::create($model));
+                    $transaction->commit();
+                    $this->flash('success', Module::t('module', "Item Updated"));
+                } else {
+                    $transaction->rollBack();
+                    $this->flash('warning', $model->error_msg ?: Module::t('module', "Error In Save Info"));
+                }
+            } else {
+                $this->flash('warning', $model->error_msg ?: Module::t('module', "It is not possible to perform this operation"));
+            }
+        } catch (\Exception $e) {
+            $transaction->rollBack();
+            $this->flash('warning', Module::t('module', "Error In Save Info"));
+            Yii::error($e->getMessage() . $e->getTraceAsString(), Yii::$app->controller->id . '/' . Yii::$app->controller->action->id);
+        }
+
+        return $this->redirect(['view', 'id' => $model->id]);
+    }
+
+
+    /**
+     * @param $id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionConfirmAndStartWorkFlow($id)
+    {
+        /** @var $model AuLetter */
+        $model = $this->findModel($id);
+        $model->setScenario(AuLetter::SCENARIO_CONFIRM_AND_START_WORK_FLOW);
+        $transaction = \Yii::$app->db->beginTransaction();
+        try {
+            if ($model->canConfirmAndStartWorkFlow()) {
+                $this->trigger(self::EVENT_BEFORE_CONFIRM_AND_START_WORK_FLOW, AuLetterEvent::create($model));
+                $flag = $model->confirmAndStartWorkFlow();
+                if ($flag) {
+                    $this->trigger(self::EVENT_AFTER_CONFIRM_AND_START_WORK_FLOW, AuLetterEvent::create($model));
                     $transaction->commit();
                     $this->flash('success', Module::t('module', "Item Updated"));
                 } else {

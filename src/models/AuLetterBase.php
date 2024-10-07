@@ -45,6 +45,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property AuLetterUser[] $cCRecipientUser
  * @property AuLetterUser[] $reference
  * @property AuLetterActivity[] $activity
+ * @property AuWorkFlow[] $workFlow
  * @property AuFolder $folder
  * @property object $creator
  * @property object $update
@@ -78,6 +79,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
     const SCENARIO_CONFIRM_AND_SEND_OUTPUT = 'confirm_and_send_output';
     const SCENARIO_RECEIVE_INPUT = 'RECEIVE_INPUT';
     const SCENARIO_CREATE_OUTPUT = 'create_output';
+    const SCENARIO_CONFIRM_AND_START_WORK_FLOW = 'confirm_and_start_work_flow';
 
     public $error_msg = '';
     public $recipients; // گیرندگان
@@ -89,6 +91,9 @@ class AuLetterBase extends \yii\db\ActiveRecord
     public $files_text;
     public $header_text = '';
     public $footer_text = '';
+    public $isWorkFlow = false;
+    public $step = 0;
+    public $steps = [];
     // ----------------------------
 
     private $_viewd = null;
@@ -135,6 +140,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
         $scenarios[self::SCENARIO_CONFIRM_AND_SEND_INTERNAL] = ['!status'];
         $scenarios[self::SCENARIO_CONFIRM_AND_SEND_OUTPUT] = ['!status'];
         $scenarios[self::SCENARIO_RECEIVE_INPUT] = ['!type'];
+        $scenarios[self::SCENARIO_CONFIRM_AND_START_WORK_FLOW] = ['!status'];
 
         return $scenarios;
     }
@@ -228,6 +234,14 @@ class AuLetterBase extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getWorkFlow()
+    {
+        return $this->hasMany(AuWorkFlow::class, ['letter_type' => 'type']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getFolder()
     {
         return $this->hasOne(AuFolder::class, ['id' => 'folder_id']);
@@ -278,6 +292,11 @@ class AuLetterBase extends \yii\db\ActiveRecord
         return $this->status == self::STATUS_DRAFT;
     }
 
+    public function canConfirmAndStartWorkFlow()
+    {
+        return $this->status == self::STATUS_WAIT_CONFIRM && $this->isWorkFlow && $this->step === 0;
+    }
+
     public function canPrintWithSenderLayout()
     {
         return $this->type == self::TYPE_INPUT && $this->input_type == self::INPUT_OUTPUT_SYSTEM;
@@ -290,7 +309,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
 
     public function canConfirmAndReceive()
     {
-        return $this->status == self::STATUS_WAIT_CONFIRM && $this->type == self::TYPE_INPUT;
+        return $this->status == self::STATUS_WAIT_CONFIRM && $this->type == self::TYPE_INPUT && !$this->isWorkFlow;
     }
 
     public function canReference()
@@ -547,6 +566,48 @@ class AuLetterBase extends \yii\db\ActiveRecord
     }
 
     /**
+     * @return bool
+     * @throws yii\db\Exception
+     */
+    public function confirmAndStartWorkFlow()
+    {
+        $this->step = 1;
+        foreach ($this->getWorkFlow()->orderBy(['order_by' => SORT_ASC])->all() as $item) {
+            /** @var AuWorkFlow $item */
+            $workFlowJsonData = new WorkFlowJsonData([
+                'title' => $item->title,
+                'operation_type' => $item->operation_type,
+                'users' => $item->users
+            ]);
+            $this->steps[$item->order_by] = $workFlowJsonData;
+            if ($item->order_by == 1) {
+                $this->createWorkFlowUsers($item->users);
+            }
+        }
+        return $this->save(false);
+    }
+
+
+    /**
+     * @return bool
+     * @throws yii\db\Exception
+     */
+    public function createWorkFlowUsers($users): bool
+    {
+        foreach (is_array($users) ? $users : [] as $userId) {
+            $auLetterUser = new AuLetterUser(['type' => AuLetterUser::TYPE_WORK_FLOW]);
+            $auLetterUser->title = 'گردش کار';
+            $auLetterUser->letter_id = $this->id;
+            $auLetterUser->user_id = $userId;
+            if (!$auLetterUser->save()) {
+                $this->addError('recipients', $auLetterUser->getFirstError('user_id'));
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * @param AuSignature $signature
      * @return bool
      * @throws yii\db\Exception
@@ -596,9 +657,8 @@ class AuLetterBase extends \yii\db\ActiveRecord
     {
         $sender = '';
         if ($this->sender_id) {
-            if ($this->type==self::TYPE_INPUT) {
-                if($this->input_type == self::INPUT_OUTPUT_SYSTEM)
-                {
+            if ($this->type == self::TYPE_INPUT) {
+                if ($this->input_type == self::INPUT_OUTPUT_SYSTEM) {
                     $clientClass = Module::getInstance()->client;
                     $client = $clientClass::findOne($this->sender_id);
                     $sender = $client?->title;
@@ -743,8 +803,19 @@ class AuLetterBase extends \yii\db\ActiveRecord
                 $this->status = self::STATUS_DRAFT;
             }
         }
+        if (in_array($this->getScenario(), [self::SCENARIO_CREATE_INTERNAL, self::SCENARIO_CREATE_INPUT, self::SCENARIO_CREATE_OUTPUT]) && $this->getWorkFlow()->exists()) {
+            $this->status = self::STATUS_WAIT_CONFIRM; // نامه داراری گردش کار می باشد
+            $this->isWorkFlow = true;
+            $this->step = 0;
+        }
+
         $this->body = !empty(trim((string)$this->body)) ? HtmlPurifier::process($this->body) : NULL;
         return parent::beforeSave($insert);
+    }
+
+    public function setWorkFlow()
+    {
+
     }
 
     /**
@@ -842,6 +913,10 @@ class AuLetterBase extends \yii\db\ActiveRecord
                     'files_text' => 'String',
                     'header_text' => 'String',
                     'footer_text' => 'String',
+                    'isWorkFlow' => 'Boolean',
+                    'step' => 'Integer',
+                    'steps' => 'ClassArray::' . WorkFlowJsonData::class,
+
                 ],
             ],
             'softDeleteBehavior' => [

@@ -27,6 +27,13 @@ use yii\helpers\Url;
         'method' => 'post',
     ],
 ]) : '' ?>
+<?= $model->canConfirmAndStartWorkFlow() ? Html::a(Module::t('module', 'Confirm And Start work flow'), ['confirm-and-start-work-flow', 'id' => $model->id], [
+    'class' => 'btn btn-secondary  mr-1',
+    'data' => [
+        'confirm' => Module::t('module', 'Are you sure?'),
+        'method' => 'post',
+    ],
+]) : '' ?>
 <?= $model->canReference() ? Html::a(Module::t('module', 'Letter Reference'),
     'javascript:void(0)', [
         'title' => Module::t('module', 'Letter Reference'),
