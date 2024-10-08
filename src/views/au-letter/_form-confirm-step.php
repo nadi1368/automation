@@ -15,11 +15,12 @@ use yii\bootstrap4\ActiveForm;
     <?php $form = ActiveForm::begin(['id' => 'form-letter-answer']); ?>
     <div class="card-body">
         <div class="row">
-
             <div class="col-md-12">
                 <?= $form->field($modelAnswer, 'answer')->textarea(['rows' => 5]) ?>
             </div>
-
+            <div class="col-md-4">
+                <?= $form->field($modelAnswer, 'signature')->checkbox() ?>
+            </div>
         </div>
     </div>
     <div class="card-footer">

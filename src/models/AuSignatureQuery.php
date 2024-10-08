@@ -45,4 +45,12 @@ class AuSignatureQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere([AuSignature::tableName() . '.status' => AuSignature::STATUS_ACTIVE]);
     }
+
+    /**
+     * @param $userId
+     * @return mixed
+     */
+    public function byUser($userId){
+        return $this->andWhere(['user_id'=>$userId]);
+    }
 }

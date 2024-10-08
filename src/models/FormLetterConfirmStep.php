@@ -15,6 +15,7 @@ use yii\helpers\HtmlPurifier;
 class FormLetterConfirmStep extends Model
 {
     public $answer;
+    public $signature = false;
     public AuLetter $letter;
 
     /**
@@ -25,14 +26,25 @@ class FormLetterConfirmStep extends Model
         return [
             ['answer', 'trim'],
             ['answer', 'string'],
+            ['signature', 'boolean'],
+            ['signature', 'validateSignature'],
         ];
     }
 
+
+
+    public function validateSignature($attribute, $params)
+    {
+        if (!$this->hasErrors() && $this->signature && !AuSignature::find()->byUser(Yii::$app->user->id)->exists()) {
+                $this->addError($attribute, "امضا شما در سیستم ثبت نشده است.");
+        }
+    }
 
     public function attributeLabels()
     {
         return [
             'answer' => Module::t('module', 'Description'),
+            'signature' => Module::t('module', 'Signature'),
         ];
     }
 
@@ -51,6 +63,10 @@ class FormLetterConfirmStep extends Model
         $auLetterActivity->type = AuLetterActivity::TYPE_ANSWER;
         $auLetterActivity->answer = $this->answer ? HtmlPurifier::process($this->answer) : 'تایید شده';
         $flag = $flag && $auLetterActivity->save();
+
+        if ($this->signature && ($signature = AuSignature::find()->byUser(Yii::$app->user->id)->limit(1)->one()) !== null) {
+            $flag = $this->letter->signature($signature);
+        }
         return $flag && $this->letter->afterConfirmUSerInCurrentStep();
     }
 }
