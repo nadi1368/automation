@@ -71,5 +71,6 @@ return [
     'Mobile' => 'موبایل',
     'Address' => 'آدرس',
     'Email' => 'ایمیل',
-    'Print' => 'چاپ'
+    'Print' => 'چاپ',
+    'Au Work Flow' => 'گردش کار',
 ];

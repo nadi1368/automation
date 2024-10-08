@@ -8,7 +8,7 @@ use common\widgets\grid\GridView;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ArrayDataProvider; */
 
-$this->title = 'Au Work Follows';
+$this->title = Module::t('module', 'Au Work Flow');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="au-work-follow-index card">

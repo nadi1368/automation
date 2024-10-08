@@ -7,7 +7,7 @@ use yii\helpers\Html;
 /* @var $model hesabro\automation\models\AuWorkFlow */
 
 $this->title = 'Create Au Work Follow';
-$this->params['breadcrumbs'][] = ['label' => 'Au Work Flow', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Module::t('module', 'Au Work Flow'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="au-work-follow-create card">

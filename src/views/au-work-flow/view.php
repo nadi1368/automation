@@ -14,7 +14,7 @@ use yii\bootstrap4\ButtonDropdown;
 /* @var $items hesabro\automation\models\AuWorkFlow[] */
 
 $this->title = $title;
-$this->params['breadcrumbs'][] = ['label' => 'Au Work Flows', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Module::t('module', 'Au Work Flow'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

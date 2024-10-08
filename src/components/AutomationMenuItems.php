@@ -61,7 +61,7 @@ class AutomationMenuItems
                         'group' => 'GeneralInfo',
                     ],
                     [
-                        'label' => 'گردش کار نامه',
+                        'label' => Module::t('module', 'Au Work Flow'),
                         'icon' => 'far fa-layer-group',
                         'url' => ["/$moduleId/au-work-flow/index"],
                         'group' => 'GeneralInfo',

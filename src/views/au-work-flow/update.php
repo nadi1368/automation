@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $model hesabro\automation\models\AuWorkFlow */
 
 $this->title = 'Update';
-$this->params['breadcrumbs'][] = ['label' => 'Au Work Flow', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Module::t('module', 'Au Work Flow'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
