@@ -113,6 +113,12 @@ class AutomationMenuItems
                         'group' => 'letters',
                         'url' => ["/$moduleId/au-letter-output/index"],
                     ],
+                    [
+                        'label' => Module::t('module', 'Au Letters Record'),
+                        'icon' => 'far fa-envelope',
+                        'group' => 'letters',
+                        'url' => ["/$moduleId/au-letter-record/index"],
+                    ],
                 ]
             ],
 

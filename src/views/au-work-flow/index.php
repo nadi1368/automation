@@ -49,7 +49,8 @@ $this->params['breadcrumbs'][] = $this->title;
                             'view' => function ($url, $model, $key) {
                                 return Html::a('<span class="far fa-eye text-info"></span>', ['view', 'type' => $key], [
                                     'title' => Module::t('module', 'View'),
-                                    'class' => 'target'
+                                    'class' => 'target',
+                                    'data-pjax'=> 0,
                                 ]);
                             },
                         ]

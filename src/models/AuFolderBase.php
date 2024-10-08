@@ -218,6 +218,9 @@ class AuFolderBase extends \yii\db\ActiveRecord
         } elseif ($type == 'ListOutput') {
             $list = self::find()->byType([AuLetter::TYPE_OUTPUT,self::ALL_TYPE])->justActive()->all();
             $list_data = ArrayHelper::map($list, 'id', 'title');
+        }elseif ($type == 'ListRecord') {
+            $list = self::find()->byType([AuLetter::TYPE_RECORD,self::ALL_TYPE])->justActive()->all();
+            $list_data = ArrayHelper::map($list, 'id', 'title');
         }
         $_items = [
             'ListInternal' => $list_data,

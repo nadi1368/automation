@@ -65,6 +65,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
     const TYPE_INTERNAL = 1; // داخلی
     const TYPE_INPUT = 2; // وارده
     const TYPE_OUTPUT = 3; // صادره
+    const TYPE_RECORD = 4; // صورت جلسه مالی
 
 
     const INPUT_OUTPUT_SYSTEM = 1; // نامه وارده سیستمی
@@ -82,6 +83,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
     const SCENARIO_RECEIVE_INPUT = 'RECEIVE_INPUT';
     const SCENARIO_CREATE_OUTPUT = 'create_output';
     const SCENARIO_CONFIRM_AND_START_WORK_FLOW = 'confirm_and_start_work_flow';
+    const SCENARIO_CREATE_RECORD = 'create_record';
 
     public $error_msg = '';
     public $recipients; // گیرندگان
@@ -116,6 +118,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
         return [
             [['parent_id', 'sender_id', 'type', 'folder_id', 'number', 'input_type', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'slave_id'], 'integer'],
             [['type', 'title', 'folder_id', 'date', 'recipients'], 'required', 'on' => self::SCENARIO_CREATE_INTERNAL],
+            [['type', 'title', 'date', 'body'], 'required', 'on' => self::SCENARIO_CREATE_RECORD],
             [['type', 'title', 'folder_id', 'date', 'recipients', 'sender_id', 'input_type'], 'required', 'on' => self::SCENARIO_CREATE_INPUT],
             [['type', 'title', 'folder_id', 'date', 'sender_id', 'recipients'], 'required', 'on' => self::SCENARIO_CREATE_OUTPUT],
             [['folder_id', 'recipients'], 'required', 'on' => self::SCENARIO_CONFIRM_AND_RECEIVE_INPUT],
@@ -135,6 +138,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
         $scenarios = parent::scenarios();
 
         $scenarios[self::SCENARIO_CREATE_INTERNAL] = ['title', 'folder_id', 'date', 'body', 'recipients', 'cc_recipients'];
+        $scenarios[self::SCENARIO_CREATE_RECORD] = ['title', 'date', 'body'];
         $scenarios[self::SCENARIO_CREATE_INPUT] = ['title', 'folder_id', 'date', 'body', 'recipients', 'cc_recipients', 'sender_id', 'input_type', 'input_number'];
         $scenarios[self::SCENARIO_CREATE_OUTPUT] = ['title', 'folder_id', 'date', 'body', 'sender_id', 'recipients', 'cc_recipients', 'input_type'];
         $scenarios[self::SCENARIO_CONFIRM_AND_RECEIVE_INPUT] = ['folder_id', 'recipients', 'cc_recipients'];
@@ -663,6 +667,10 @@ class AuLetterBase extends \yii\db\ActiveRecord
             $auUser->status = AuLetterUser::STATUS_VIEWED;
             $auUser->save(false);
         }
+        if ($this->status == self::STATUS_WAIT_CONFIRM && $this->isWorkFlow && $this->current_step > 0 && ($auUser = $this->getWorkFlowUser()->byStep($this->current_step)->byUser(Yii::$app->user->id)->byStatus([AuLetterUser::STATUS_WAIT_VIEW])->limit(1)->one()) !== null) {
+            $auUser->status = AuLetterUser::STATUS_VIEWED;
+            $auUser->save(false);
+        }
     }
 
     /**
@@ -845,7 +853,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
                 $this->status = self::STATUS_DRAFT;
             }
         }
-        if (in_array($this->getScenario(), [self::SCENARIO_CREATE_INTERNAL, self::SCENARIO_CREATE_INPUT, self::SCENARIO_CREATE_OUTPUT]) && ($totalStep = (int)$this->getWorkFlow()->max('order_by')) > 0) {
+        if (in_array($this->getScenario(), [self::SCENARIO_CREATE_INTERNAL, self::SCENARIO_CREATE_INPUT, self::SCENARIO_CREATE_OUTPUT, self::SCENARIO_CREATE_RECORD]) && ($totalStep = (int)$this->getWorkFlow()->max('order_by')) > 0) {
             $this->status = self::STATUS_WAIT_CONFIRM; // نامه داراری گردش کار می باشد
             $this->isWorkFlow = true;
             $this->current_step = 0;
@@ -870,16 +878,19 @@ class AuLetterBase extends \yii\db\ActiveRecord
                 self::TYPE_INTERNAL => 'داخلی',
                 self::TYPE_INPUT => 'وارده',
                 self::TYPE_OUTPUT => 'صادره',
+                self::TYPE_RECORD => 'صورت جلسه مالی',
             ],
             'TypeControllers' => [
                 self::TYPE_INTERNAL => 'au-letter-internal',
                 self::TYPE_INPUT => 'au-letter-input',
                 self::TYPE_OUTPUT => 'au-letter-output',
+                self::TYPE_RECORD => 'au-letter-record',
             ],
             'Scenario' => [
                 self::TYPE_INTERNAL => self::SCENARIO_CREATE_INTERNAL,
                 self::TYPE_INPUT => self::SCENARIO_CREATE_INPUT,
                 self::TYPE_OUTPUT => self::SCENARIO_CREATE_OUTPUT,
+                self::TYPE_RECORD => self::SCENARIO_CREATE_RECORD,
             ],
             'Status' => [
                 self::STATUS_DRAFT => 'پیش نویس',
