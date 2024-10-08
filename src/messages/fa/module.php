@@ -77,4 +77,5 @@ return [
     'Au Work Flow' => 'گردش کار',
     'Confirm And Start work flow' => 'تایید مرحله بعد',
     'Confirm Step' => 'تایید',
+    'Operation Type' => 'نوع وابستگی اشخاص',
 ];

@@ -47,7 +47,7 @@ $classUser = Module::getInstance()->user;
                             'maximumSelected' => new JsExpression("function () { return 'حداکثر انتخاب شده'; }"),
                         ],
                         'ajax' => [
-                            'url' => Url::to([Module::getInstance()->userFindUrl]),
+                            'url' => Url::to(Module::getInstance()->userFindUrl),
                             'dataType' => 'json',
                             'data' => new JsExpression('function(params) { return {q:params.term}; }')
                         ],
@@ -75,7 +75,7 @@ $classUser = Module::getInstance()->user;
                             'maximumSelected' => new JsExpression("function () { return 'حداکثر انتخاب شده'; }"),
                         ],
                         'ajax' => [
-                            'url' => Url::to([Module::getInstance()->userFindUrl]),
+                            'url' => Url::to(Module::getInstance()->userFindUrl),
                             'dataType' => 'json',
                             'data' => new JsExpression('function(params) { return {q:params.term}; }')
                         ],
