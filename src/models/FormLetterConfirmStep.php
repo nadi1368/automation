@@ -60,7 +60,7 @@ class FormLetterConfirmStep extends Model
         }
         $auLetterActivity = new AuLetterActivity();
         $auLetterActivity->letter_id = $this->letter->id;
-        $auLetterActivity->type = AuLetterActivity::TYPE_ANSWER;
+        $auLetterActivity->type = AuLetterActivity::TYPE_CONFIRM;
         $auLetterActivity->answer = $this->answer ? HtmlPurifier::process($this->answer) : 'تایید شده';
         $flag = $flag && $auLetterActivity->save();
 
