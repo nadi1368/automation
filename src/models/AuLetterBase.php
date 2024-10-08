@@ -94,7 +94,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
     public $header_text = '';
     public $footer_text = '';
     public $isWorkFlow = false;
-    public $step = 0;
+    public $total_step = 0;
     // ----------------------------
 
     private $_viewd = null;
@@ -298,6 +298,10 @@ class AuLetterBase extends \yii\db\ActiveRecord
 
     public function canConfirmAndSend()
     {
+        if ($this->status == self::STATUS_WAIT_CONFIRM && $this->isWorkFlow && $this->total_step > 0) {
+            //اگر نامه دارای فرایند گردش کار بود بعد از تایید اخرین مرجله میتواند شماره بخورد
+            return $this->current_step > $this->total_step;
+        }
         return $this->status == self::STATUS_DRAFT;
     }
 
@@ -308,7 +312,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
      */
     public function canConfirmAndStartWorkFlow()
     {
-        return $this->status == self::STATUS_WAIT_CONFIRM && $this->isWorkFlow && $this->step === 0;
+        return $this->status == self::STATUS_WAIT_CONFIRM && $this->isWorkFlow && $this->current_step === 0;
     }
 
     /**
@@ -317,7 +321,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
      */
     public function canConfirmInCurrentStep()
     {
-        if ($this->status == self::STATUS_WAIT_CONFIRM && $this->isWorkFlow && $this->step > 0) {
+        if ($this->status == self::STATUS_WAIT_CONFIRM && $this->isWorkFlow && $this->current_step > 0) {
             return $this->getWorkFlowUser()->byStep($this->current_step)->byUser(Yii::$app->user->id)->byStatus([AuLetterUser::STATUS_WAIT_VIEW, AuLetterUser::STATUS_VIEWED])->exists();
         }
         return false;
@@ -661,6 +665,10 @@ class AuLetterBase extends \yii\db\ActiveRecord
         }
     }
 
+    /**
+     * @return bool
+     * بعد از تایید یکی از اشخاص این مرحله
+     */
     public function afterConfirmUSerInCurrentStep()
     {
         $findWait = $this->getWorkFlowUser()->byStep($this->current_step)->byStatus([AuLetterUser::STATUS_WAIT_VIEW, AuLetterUser::STATUS_VIEWED])->limit(1)->one();
@@ -716,7 +724,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
     {
         $list = '';
         foreach ($this->getWorkFlowUser()->byStep($step)->all() as $auLetterUser) {
-            $list .= Html::tag('label', Html::tag('i', '', ['class' => AuLetterUser::itemAlias('StatusIcon', $auLetterUser->status) . ' mr-1']) . $auLetterUser->user?->fullName, ['class' => 'badge badge-info mr-2 mb-2', 'title' => AuLetterUser::itemAlias('Status', $auLetterUser->status)]) . '<br />';
+            $list .= Html::tag('label', Html::tag('i', '', ['class' => AuLetterUser::itemAlias('StatusIconWorkFlow', $auLetterUser->status) . ' mr-1']) . $auLetterUser->user?->fullName, ['class' => 'badge badge-info mr-2 mb-2', 'title' => AuLetterUser::itemAlias('Status', $auLetterUser->status)]) . '<br />';
         }
         return $list;
     }
@@ -837,20 +845,17 @@ class AuLetterBase extends \yii\db\ActiveRecord
                 $this->status = self::STATUS_DRAFT;
             }
         }
-        if (in_array($this->getScenario(), [self::SCENARIO_CREATE_INTERNAL, self::SCENARIO_CREATE_INPUT, self::SCENARIO_CREATE_OUTPUT]) && $this->getWorkFlow()->exists()) {
+        if (in_array($this->getScenario(), [self::SCENARIO_CREATE_INTERNAL, self::SCENARIO_CREATE_INPUT, self::SCENARIO_CREATE_OUTPUT]) && ($totalStep = (int)$this->getWorkFlow()->max('order_by')) > 0) {
             $this->status = self::STATUS_WAIT_CONFIRM; // نامه داراری گردش کار می باشد
             $this->isWorkFlow = true;
-            $this->step = 0;
+            $this->current_step = 0;
+            $this->total_step = $totalStep;
         }
 
         $this->body = !empty(trim((string)$this->body)) ? HtmlPurifier::process($this->body) : NULL;
         return parent::beforeSave($insert);
     }
 
-    public function setWorkFlow()
-    {
-
-    }
 
     /**
      * @param $type
@@ -948,7 +953,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
                     'header_text' => 'String',
                     'footer_text' => 'String',
                     'isWorkFlow' => 'Boolean',
-                    'step' => 'Integer',
+                    'total_step' => 'Integer',
 
                 ],
             ],

@@ -86,12 +86,12 @@ class AuLetterController extends Controller
                     [
                         [
                             'allow' => true,
-                            'roles' => ['automation/au-letter/view', 'superadmin'],
+                            'roles' => ['automation/au-letter/view', 'superadmin', 'MBT_WORKER'],
                             'actions' => ['index', 'view', 'print']
                         ],
                         [
                             'allow' => true,
-                            'roles' => ['automation/au-letter/action', 'superadmin'],
+                            'roles' => ['automation/au-letter/action', 'superadmin', 'MBT_WORKER'],
                             'actions' => ['create', 'confirm-and-send', 'confirm-and-start-work-flow', 'confirm-step', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive', 'update', 'delete']
                         ],
                     ]

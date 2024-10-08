@@ -150,6 +150,11 @@ class AuLetterUserBase extends \yii\db\ActiveRecord
                 self::STATUS_VIEWED => 'fa fa-envelope-open',
                 self::STATUS_ANSWERED => 'fa fa-reply',
             ],
+            'StatusIconWorkFlow'=>[
+                self::STATUS_WAIT_VIEW => 'fa fa-envelope',
+                self::STATUS_VIEWED => 'fa fa-envelope-open',
+                self::STATUS_ANSWERED => 'fa fa-check',
+            ],
         ];
         if (isset($code))
             return isset($_items[$type][$code]) ? $_items[$type][$code] : false;

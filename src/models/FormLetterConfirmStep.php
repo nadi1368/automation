@@ -46,13 +46,11 @@ class FormLetterConfirmStep extends Model
             $auLetterUser->status = AuLetterUser::STATUS_ANSWERED;
             $flag = $auLetterUser->save(false);
         }
-        if (!empty($this->answer)) {
-            $auLetterActivity = new AuLetterActivity();
-            $auLetterActivity->letter_id = $this->letter->id;
-            $auLetterActivity->type = AuLetterActivity::TYPE_ANSWER;
-            $auLetterActivity->answer = HtmlPurifier::process($this->answer);
-            $flag = $flag && $auLetterActivity->save();
-        }
+        $auLetterActivity = new AuLetterActivity();
+        $auLetterActivity->letter_id = $this->letter->id;
+        $auLetterActivity->type = AuLetterActivity::TYPE_ANSWER;
+        $auLetterActivity->answer = $this->answer ? HtmlPurifier::process($this->answer) : 'تایید شده';
+        $flag = $flag && $auLetterActivity->save();
         return $flag && $this->letter->afterConfirmUSerInCurrentStep();
     }
 }
