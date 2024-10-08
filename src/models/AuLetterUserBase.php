@@ -2,6 +2,7 @@
 
 namespace hesabro\automation\models;
 
+use hesabro\helpers\behaviors\JsonAdditional;
 use Yii;
 use hesabro\automation\Module;
 use hesabro\changelog\behaviors\LogBehavior;
@@ -17,6 +18,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $type
  * @property string|null $title
  * @property int $status
+ * @property int $step
  * @property int $slave_id
  *
  * @property AuLetter $letter
@@ -36,6 +38,10 @@ class AuLetterUserBase extends \yii\db\ActiveRecord
     const TYPE_WORK_FLOW = 4; // گردش کار
 
     const SCENARIO_CREATE = 'create';
+
+
+    // ----- ADDITIONAL DATA ------
+    public $operation_type;
 
     /**
      * {@inheritdoc}
@@ -162,6 +168,15 @@ class AuLetterUserBase extends \yii\db\ActiveRecord
                 'class' => LogBehavior::class,
                 'ownerClassName' => self::class,
                 'saveAfterInsert' => true
+            ],
+            [
+                'class' => JsonAdditional::class,
+                'ownerClassName' => self::class,
+                'fieldAdditional' => 'additional_data',
+                'AdditionalDataProperty' => [
+                    'operation_type' => 'Integer',
+
+                ],
             ],
             'softDeleteBehavior' => [
                 'class' => SoftDeleteBehavior::class,

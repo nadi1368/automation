@@ -31,6 +31,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property string|null $date
  * @property string|null $additional_data
  * @property int $status
+ * @property int $current_step
  * @property int $created_at
  * @property int|null $created_by
  * @property int $updated_at
@@ -40,6 +41,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  *
  * @property AuLetterUser[] $user
  * @property AuLetterUser[] $recipientUser
+ * @property AuLetterUser[] $workFlowUser
  * @property AuLetterClient[] $recipientClient
  * @property AuLetterClientWithoutSlave[] $recipientClientWithoutSlave
  * @property AuLetterUser[] $cCRecipientUser
@@ -93,7 +95,6 @@ class AuLetterBase extends \yii\db\ActiveRecord
     public $footer_text = '';
     public $isWorkFlow = false;
     public $step = 0;
-    public $steps = [];
     // ----------------------------
 
     private $_viewd = null;
@@ -189,6 +190,14 @@ class AuLetterBase extends \yii\db\ActiveRecord
     public function getRecipientUser()
     {
         return $this->hasMany(AuLetterUser::class, ['letter_id' => 'id'])->andWhere(['type' => AuLetterUser::TYPE_RECIPIENTS]);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWorkFlowUser()
+    {
+        return $this->hasMany(AuLetterUser::class, ['letter_id' => 'id'])->andWhere(['type' => AuLetterUser::TYPE_WORK_FLOW]);
     }
 
     /**
@@ -571,41 +580,26 @@ class AuLetterBase extends \yii\db\ActiveRecord
      */
     public function confirmAndStartWorkFlow()
     {
-        $this->step = 1;
         foreach ($this->getWorkFlow()->orderBy(['order_by' => SORT_ASC])->all() as $item) {
             /** @var AuWorkFlow $item */
-            $workFlowJsonData = new WorkFlowJsonData([
-                'title' => $item->title,
-                'operation_type' => $item->operation_type,
-                'users' => $item->users
-            ]);
-            $this->steps[$item->order_by] = $workFlowJsonData;
-            if ($item->order_by == 1) {
-                $this->createWorkFlowUsers($item->users);
+            foreach (is_array($item->users) ? $item->users : [] as $userId) {
+                $auLetterUser = new AuLetterUser(['type' => AuLetterUser::TYPE_WORK_FLOW]);
+                $auLetterUser->title = $item->title;
+                $auLetterUser->letter_id = $this->id;
+                $auLetterUser->user_id = $userId;
+                $auLetterUser->step = $item->order_by;
+                $auLetterUser->operation_type = $item->operation_type;
+                if (!$auLetterUser->save()) {
+                    $this->addError('recipients', $auLetterUser->getFirstError('user_id'));
+                    return false;
+                }
             }
+
         }
+        $this->current_step = 1;
         return $this->save(false);
     }
 
-
-    /**
-     * @return bool
-     * @throws yii\db\Exception
-     */
-    public function createWorkFlowUsers($users): bool
-    {
-        foreach (is_array($users) ? $users : [] as $userId) {
-            $auLetterUser = new AuLetterUser(['type' => AuLetterUser::TYPE_WORK_FLOW]);
-            $auLetterUser->title = 'گردش کار';
-            $auLetterUser->letter_id = $this->id;
-            $auLetterUser->user_id = $userId;
-            if (!$auLetterUser->save()) {
-                $this->addError('recipients', $auLetterUser->getFirstError('user_id'));
-                return false;
-            }
-        }
-        return true;
-    }
 
     /**
      * @param AuSignature $signature
@@ -683,6 +677,18 @@ class AuLetterBase extends \yii\db\ActiveRecord
         $list = '';
         foreach ($this->recipientUser as $auLetterUser) {
             $list .= Html::tag('label', Html::tag('i', '', ['class' => AuLetterUser::itemAlias('StatusIcon', $auLetterUser->status) . ' mr-1']) . $auLetterUser->user?->fullName, ['class' => 'badge badge-info mr-2 mb-2', 'title' => AuLetterUser::itemAlias('Status', $auLetterUser->status)]);
+        }
+        return $list;
+    }
+
+    /**
+     * @return string
+     */
+    public function showWorkFlowUserList($step)
+    {
+        $list = '';
+        foreach ($this->getWorkFlowUser()->andWhere(['step'=>$step])->all() as $auLetterUser) {
+            $list .= Html::tag('label', Html::tag('i', '', ['class' => AuLetterUser::itemAlias('StatusIcon', $auLetterUser->status) . ' mr-1']) . $auLetterUser->user?->fullName, ['class' => 'badge badge-info mr-2 mb-2', 'title' => AuLetterUser::itemAlias('Status', $auLetterUser->status)]).'<br />';
         }
         return $list;
     }
@@ -915,7 +921,6 @@ class AuLetterBase extends \yii\db\ActiveRecord
                     'footer_text' => 'String',
                     'isWorkFlow' => 'Boolean',
                     'step' => 'Integer',
-                    'steps' => 'ClassArray::' . WorkFlowJsonData::class,
 
                 ],
             ],
