@@ -80,6 +80,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
     const SCENARIO_CONFIRM_AND_RECEIVE_INPUT = 'confirm_and_receive_input';
     const SCENARIO_CONFIRM_AND_SEND_INTERNAL = 'confirm_and_send_internal';
     const SCENARIO_CONFIRM_AND_SEND_OUTPUT = 'confirm_and_send_output';
+    const SCENARIO_CONFIRM_AND_SEND_RECORD = 'confirm_and_send_record';
     const SCENARIO_RECEIVE_INPUT = 'RECEIVE_INPUT';
     const SCENARIO_CREATE_OUTPUT = 'create_output';
     const SCENARIO_CONFIRM_AND_START_WORK_FLOW = 'confirm_and_start_work_flow';
@@ -122,6 +123,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
             [['type', 'title', 'folder_id', 'date', 'recipients', 'sender_id', 'input_type'], 'required', 'on' => self::SCENARIO_CREATE_INPUT],
             [['type', 'title', 'folder_id', 'date', 'sender_id', 'recipients'], 'required', 'on' => self::SCENARIO_CREATE_OUTPUT],
             [['folder_id', 'recipients'], 'required', 'on' => self::SCENARIO_CONFIRM_AND_RECEIVE_INPUT],
+            [['folder_id'], 'required', 'on' => [self::SCENARIO_CONFIRM_AND_SEND_INTERNAL, self::SCENARIO_CONFIRM_AND_SEND_OUTPUT, self::SCENARIO_CONFIRM_AND_SEND_RECORD]],
             [['recipients', 'cc_recipients'], 'safe', 'on' => [self::SCENARIO_CREATE_INTERNAL, self::SCENARIO_CREATE_OUTPUT, self::SCENARIO_CONFIRM_AND_RECEIVE_INPUT]],
             [['body'], 'string'],
             [['title'], 'string', 'max' => 64],
@@ -142,8 +144,9 @@ class AuLetterBase extends \yii\db\ActiveRecord
         $scenarios[self::SCENARIO_CREATE_INPUT] = ['title', 'folder_id', 'date', 'body', 'recipients', 'cc_recipients', 'sender_id', 'input_type', 'input_number'];
         $scenarios[self::SCENARIO_CREATE_OUTPUT] = ['title', 'folder_id', 'date', 'body', 'sender_id', 'recipients', 'cc_recipients', 'input_type'];
         $scenarios[self::SCENARIO_CONFIRM_AND_RECEIVE_INPUT] = ['folder_id', 'recipients', 'cc_recipients'];
-        $scenarios[self::SCENARIO_CONFIRM_AND_SEND_INTERNAL] = ['!status'];
-        $scenarios[self::SCENARIO_CONFIRM_AND_SEND_OUTPUT] = ['!status'];
+        $scenarios[self::SCENARIO_CONFIRM_AND_SEND_INTERNAL] = ['folder_id', '!status'];
+        $scenarios[self::SCENARIO_CONFIRM_AND_SEND_OUTPUT] = ['folder_id', '!status'];
+        $scenarios[self::SCENARIO_CONFIRM_AND_SEND_RECORD] = ['folder_id', '!status'];
         $scenarios[self::SCENARIO_RECEIVE_INPUT] = ['!type'];
         $scenarios[self::SCENARIO_CONFIRM_AND_START_WORK_FLOW] = ['!status'];
 
@@ -891,6 +894,12 @@ class AuLetterBase extends \yii\db\ActiveRecord
                 self::TYPE_INPUT => self::SCENARIO_CREATE_INPUT,
                 self::TYPE_OUTPUT => self::SCENARIO_CREATE_OUTPUT,
                 self::TYPE_RECORD => self::SCENARIO_CREATE_RECORD,
+            ],
+            'ScenarioConfirm' => [
+                self::TYPE_INTERNAL => self::SCENARIO_CONFIRM_AND_SEND_INTERNAL,
+                self::TYPE_INPUT => self::SCENARIO_CONFIRM_AND_SEND_INTERNAL,
+                self::TYPE_OUTPUT => self::SCENARIO_CONFIRM_AND_SEND_OUTPUT,
+                self::TYPE_RECORD => self::SCENARIO_CONFIRM_AND_SEND_RECORD,
             ],
             'Status' => [
                 self::STATUS_DRAFT => 'پیش نویس',

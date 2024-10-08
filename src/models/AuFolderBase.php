@@ -201,6 +201,22 @@ class AuFolderBase extends \yii\db\ActiveRecord
 
     const ALL_TYPE = 10;
 
+    public static function getList($type)
+    {
+        switch ($type){
+            case AuLetter::TYPE_INTERNAL:
+            case AuLetter::TYPE_INPUT:
+            case AuLetter::TYPE_OUTPUT:
+            case AuLetter::TYPE_RECORD:
+                $list_data = ArrayHelper::map(self::find()->byType([$type,self::ALL_TYPE])->justActive()->all(), 'id', 'title');
+                break;
+
+            default :
+                $list_data = ArrayHelper::map(self::find()->byType([self::ALL_TYPE])->justActive()->all(), 'id', 'title');
+                break;
+        }
+        return $list_data;
+    }
     /**
      * @param $type
      * @param $code

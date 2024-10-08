@@ -20,13 +20,18 @@ use yii\helpers\Url;
         'method' => 'post',
     ],
 ]) : '' ?>
-<?= $model->canConfirmAndSend() ? Html::a(Module::t('module', 'Confirm And Send'), ['confirm-and-send', 'id' => $model->id], [
-    'class' => 'btn btn-secondary  mr-1',
-    'data' => [
-        'confirm' => Module::t('module', 'Are you sure?'),
-        'method' => 'post',
-    ],
-]) : '' ?>
+<?= $model->canConfirmAndSend() ? Html::a(Module::t('module', 'Confirm And Send'),
+    'javascript:void(0)', [
+        'title' => Module::t('module', 'Confirm And Send'),
+        'data-title' => Module::t('module', 'Confirm And Send'),
+        'class' => 'btn btn-secondary  mr-1',
+        'data-size' => 'modal-lg',
+        'data-toggle' => 'modal',
+        'data-target' => '#modal-pjax',
+        'data-url' => Url::to(['confirm-and-send', 'id' => $model->id]),
+        'data-reload-pjax-container-on-show' => 0,
+        'data-reload-pjax-container' => 'p-jax-letter',
+    ]) : '' ?>
 <?= $model->canConfirmAndStartWorkFlow() ? Html::a(Module::t('module', 'Confirm And Start work flow'), ['confirm-and-start-work-flow', 'id' => $model->id], [
     'class' => 'btn btn-secondary  mr-1',
     'data' => [

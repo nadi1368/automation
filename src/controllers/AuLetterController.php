@@ -175,30 +175,39 @@ class AuLetterController extends Controller
     {
         /** @var $model AuLetter */
         $model = $this->findModel($id);
-        $model->setScenario($model->type == AuLetter::TYPE_OUTPUT ? AuLetter::SCENARIO_CONFIRM_AND_SEND_OUTPUT : AuLetter::SCENARIO_CONFIRM_AND_SEND_INTERNAL);
-        $transaction = \Yii::$app->db->beginTransaction();
-        try {
-            if ($model->canConfirmAndSend()) {
-                $this->trigger(self::EVENT_BEFORE_CONFIRM_AND_SEND, AuLetterEvent::create($model));
+        $model->setScenario(AuLetter::itemAlias('ScenarioConfirm', $model->type));
+        if (!$model->canConfirmAndSend()) {
+            throw new BadRequestHttpException($model->error_msg ?: Module::t('module', "It is not possible to perform this operation"));
+        }
+        $result = [
+            'success' => false,
+            'msg' => Module::t('module', "Error In Save Info")
+        ];
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $this->trigger(self::EVENT_BEFORE_CONFIRM_AND_SEND, AuLetterEvent::create($model));
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
                 $flag = $model->confirmAndSend();
                 if ($flag) {
                     $this->trigger(self::EVENT_AFTER_CONFIRM_AND_SEND, AuLetterEvent::create($model));
+                    $result = [
+                        'success' => true,
+                        'msg' => Module::t('module', "Item Updated")
+                    ];
                     $transaction->commit();
-                    $this->flash('success', Module::t('module', "Item Updated"));
                 } else {
                     $transaction->rollBack();
-                    $this->flash('warning', $model->error_msg ?: Module::t('module', "Error In Save Info"));
                 }
-            } else {
-                $this->flash('warning', $model->error_msg ?: Module::t('module', "It is not possible to perform this operation"));
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::error($e->getMessage() . $e->getTraceAsString(), Yii::$app->controller->id . '/' . Yii::$app->controller->action->id);
             }
-        } catch (\Exception $e) {
-            $transaction->rollBack();
-            $this->flash('warning', Module::t('module', "Error In Save Info"));
-            Yii::error($e->getMessage() . $e->getTraceAsString(), Yii::$app->controller->id . '/' . Yii::$app->controller->action->id);
+            return $this->asJson($result);
         }
-
-        return $this->redirect(['view', 'id' => $model->id]);
+        $this->performAjaxValidation($model);
+        return $this->renderAjax('/au-letter/_form-confirm-and-send', [
+            'model' => $model,
+        ]);
     }
 
 
