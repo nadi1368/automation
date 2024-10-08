@@ -301,9 +301,26 @@ class AuLetterBase extends \yii\db\ActiveRecord
         return $this->status == self::STATUS_DRAFT;
     }
 
+    /**
+     * @return bool
+     * تایید نامه های دارای گردش کار
+     * و شروع فرایند گردش کار
+     */
     public function canConfirmAndStartWorkFlow()
     {
         return $this->status == self::STATUS_WAIT_CONFIRM && $this->isWorkFlow && $this->step === 0;
+    }
+
+    /**
+     * @return false
+     * تایید نامه در این مرحله توسط شخص مربوطه
+     */
+    public function canConfirmInCurrentStep()
+    {
+        if ($this->status == self::STATUS_WAIT_CONFIRM && $this->isWorkFlow && $this->step > 0) {
+            return $this->getWorkFlowUser()->byStep($this->current_step)->byUser(Yii::$app->user->id)->byStatus([AuLetterUser::STATUS_WAIT_VIEW, AuLetterUser::STATUS_VIEWED])->exists();
+        }
+        return false;
     }
 
     public function canPrintWithSenderLayout()
@@ -644,6 +661,17 @@ class AuLetterBase extends \yii\db\ActiveRecord
         }
     }
 
+    public function afterConfirmUSerInCurrentStep()
+    {
+        $findWait = $this->getWorkFlowUser()->byStep($this->current_step)->byStatus([AuLetterUser::STATUS_WAIT_VIEW, AuLetterUser::STATUS_VIEWED])->limit(1)->one();
+        /** @var AuLetterUser $findWait */
+        if ($findWait === null || $findWait->operation_type == AuWorkFlow::OPERATION_TYPE_OR) {
+            $this->current_step++;
+            return $this->save(false);
+        }
+        return true;
+    }
+
     /**
      * @return string
      */
@@ -687,8 +715,8 @@ class AuLetterBase extends \yii\db\ActiveRecord
     public function showWorkFlowUserList($step)
     {
         $list = '';
-        foreach ($this->getWorkFlowUser()->andWhere(['step'=>$step])->all() as $auLetterUser) {
-            $list .= Html::tag('label', Html::tag('i', '', ['class' => AuLetterUser::itemAlias('StatusIcon', $auLetterUser->status) . ' mr-1']) . $auLetterUser->user?->fullName, ['class' => 'badge badge-info mr-2 mb-2', 'title' => AuLetterUser::itemAlias('Status', $auLetterUser->status)]).'<br />';
+        foreach ($this->getWorkFlowUser()->byStep($step)->all() as $auLetterUser) {
+            $list .= Html::tag('label', Html::tag('i', '', ['class' => AuLetterUser::itemAlias('StatusIcon', $auLetterUser->status) . ' mr-1']) . $auLetterUser->user?->fullName, ['class' => 'badge badge-info mr-2 mb-2', 'title' => AuLetterUser::itemAlias('Status', $auLetterUser->status)]) . '<br />';
         }
         return $list;
     }

@@ -46,7 +46,7 @@ class AuLetterInternalController extends AuLetterController
                         [
                             'allow' => true,
                             'roles' => ['automation/au-letter-internal/action', 'superadmin'],
-                            'actions' => ['create', 'confirm-and-send', 'confirm-and-start-work-flow', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive', 'update', 'delete']
+                            'actions' => ['create', 'confirm-and-send', 'confirm-and-start-work-flow', 'confirm-step', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive', 'update', 'delete']
                         ],
                     ]
             ]

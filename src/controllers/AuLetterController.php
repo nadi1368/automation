@@ -7,6 +7,7 @@ use hesabro\automation\models\AuLetterActivity;
 use hesabro\automation\models\AuPrintLayout;
 use hesabro\automation\models\AuSignature;
 use hesabro\automation\models\FormLetterAnswer;
+use hesabro\automation\models\FormLetterConfirmStep;
 use hesabro\automation\models\FormLetterReference;
 use hesabro\automation\Module;
 use hesabro\helpers\traits\AjaxValidationTrait;
@@ -63,6 +64,10 @@ class AuLetterController extends Controller
 
     public const EVENT_AFTER_CONFIRM_AND_START_WORK_FLOW = 'afterConfirmAndStartWorkFlow';
 
+    public const EVENT_BEFORE_CONFIRM_STEP = 'beforeConfirmStep';
+
+    public const EVENT_AFTER_CONFIRM_STEP = 'afterConfirmStep';
+
     /**
      * {@inheritdoc}
      */
@@ -87,7 +92,7 @@ class AuLetterController extends Controller
                         [
                             'allow' => true,
                             'roles' => ['automation/au-letter/action', 'superadmin'],
-                            'actions' => ['create', 'confirm-and-send', 'confirm-and-start-work-flow', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive', 'update', 'delete']
+                            'actions' => ['create', 'confirm-and-send', 'confirm-and-start-work-flow', 'confirm-step', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive', 'update', 'delete']
                         ],
                     ]
             ]
@@ -230,6 +235,52 @@ class AuLetterController extends Controller
         }
 
         return $this->redirect(['view', 'id' => $model->id]);
+    }
+
+    /**
+     * @param $id
+     * @return string|\yii\web\Response
+     * @throws BadRequestHttpException
+     * @throws NotFoundHttpException
+     * @throws \yii\base\ExitException
+     */
+    public function actionConfirmStep($id)
+    {
+        /** @var $model AuLetter */
+        $model = $this->findModel($id);
+        if (!$model->canConfirmInCurrentStep()) {
+            throw new BadRequestHttpException($model->error_msg ?: Module::t('module', "It is not possible to perform this operation"));
+        }
+        $modelAnswer = new FormLetterConfirmStep(['letter' => $model]);
+        $result = [
+            'success' => false,
+            'msg' => Module::t('module', "Error In Save Info")
+        ];
+        if ($modelAnswer->load(Yii::$app->request->post()) && $modelAnswer->validate()) {
+            $this->trigger(self::EVENT_BEFORE_CONFIRM_STEP, AuLetterEvent::create($model));
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                $flag = $modelAnswer->save();
+                if ($flag) {
+                    $this->trigger(self::EVENT_AFTER_CONFIRM_STEP, AuLetterEvent::create($model));
+                    $result = [
+                        'success' => true,
+                        'msg' => Module::t('module', "Item Updated")
+                    ];
+                    $transaction->commit();
+                } else {
+                    $transaction->rollBack();
+                }
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::error($e->getMessage() . $e->getTraceAsString(), Yii::$app->controller->id . '/' . Yii::$app->controller->action->id);
+            }
+            return $this->asJson($result);
+        }
+        $this->performAjaxValidation($modelAnswer);
+        return $this->renderAjax('/au-letter/_form-confirm-step', [
+            'modelAnswer' => $modelAnswer,
+        ]);
     }
 
     /**

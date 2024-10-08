@@ -72,4 +72,12 @@ class AuLetterUserQuery extends \yii\db\ActiveQuery
     {
         return $this->andWhere(['status' => $status]);
     }
+    /**
+     * @param $userId
+     * @return AuLetterUserQuery
+     */
+    public function byStep($step): AuLetterUserQuery
+    {
+        return $this->andWhere(['step' => $step]);
+    }
 }
