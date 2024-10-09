@@ -7,7 +7,6 @@ use hesabro\automation\Module;
 
 $this->title = Module::t('module', 'Update');
 $this->params['breadcrumbs'][] = ['label' => Module::t('module', 'A Folders'), 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id, 'slave_id' => $model->slave_id]];
 $this->params['breadcrumbs'][] = Module::t('module', 'Update');
 ?>
 <div class="afolder-update card">

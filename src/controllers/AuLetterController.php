@@ -4,6 +4,7 @@ namespace hesabro\automation\controllers;
 
 use hesabro\automation\events\AuLetterEvent;
 use hesabro\automation\models\AuLetterActivity;
+use hesabro\automation\models\AuLetterUser;
 use hesabro\automation\models\AuPrintLayout;
 use hesabro\automation\models\AuSignature;
 use hesabro\automation\models\FormLetterAnswer;
@@ -86,13 +87,27 @@ class AuLetterController extends Controller
                     [
                         [
                             'allow' => true,
-                            'roles' => ['automation/au-letter/view', 'superadmin', 'MBT_WORKER'],
-                            'actions' => ['index', 'view', 'print']
+                            'roles' => ['automation/au-letter/manage', 'superadmin'],
+                            'actions' => ['index', 'view', 'print', 'create', 'confirm-and-send', 'confirm-and-start-work-flow', 'confirm-and-receive', 'update', 'delete']
                         ],
                         [
                             'allow' => true,
-                            'roles' => ['automation/au-letter/action', 'superadmin', 'MBT_WORKER'],
-                            'actions' => ['create', 'confirm-and-send', 'confirm-and-start-work-flow', 'confirm-step', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive', 'update', 'delete']
+                            'roles' => ['automation/au-letter/manage', 'superadmin'],
+                            'actions' => ['index', 'view', 'confirm-step', 'reference', 'answer', 'attach', 'signature']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-letter/action'],
+                            'actions' => ['index'],
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-letter/action'],
+                            'actions' => ['view', 'confirm-step', 'reference', 'answer', 'attach', 'signature'],
+                            'matchCallback' => function ($rule, $action) {
+                                $letterId = Yii::$app->request->get('id', 0);
+                                return AuLetterUser::find()->byUser(Yii::$app->user->id)->byLetter($letterId)->exists();
+                            },
                         ],
                     ]
             ]

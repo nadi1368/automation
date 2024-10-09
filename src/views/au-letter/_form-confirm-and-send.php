@@ -16,7 +16,7 @@ use kartik\select2\Select2;
 
     <?php $form = ActiveForm::begin(['id' => 'form-letter-confirm-and-send']); ?>
     <div class="card-body">
-        <div class="row">g
+        <div class="row">
             <div class="col-md-12">
                     <?= $form->field($model, 'folder_id')->widget(Select2::class, [
                         'data' => AuFolder::getList($model->type),

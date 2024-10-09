@@ -3,6 +3,7 @@
 namespace hesabro\automation\controllers;
 
 use hesabro\automation\events\AuLetterInternalEvent;
+use hesabro\automation\models\AuLetterUser;
 use hesabro\helpers\traits\AjaxValidationTrait;
 use hesabro\automation\Module;
 use Yii;
@@ -40,13 +41,22 @@ class AuLetterOutputController extends AuLetterController
                     [
                         [
                             'allow' => true,
-                            'roles' => ['automation/au-letter-output/view', 'superadmin'],
-                            'actions' => ['index', 'view', 'print']
+                            'roles' => ['automation/au-letter-output/manage', 'superadmin'],
+                            'actions' => ['index', 'view', 'print', 'create', 'confirm-and-send', 'confirm-and-start-work-flow', 'confirm-and-receive', 'update', 'delete']
                         ],
                         [
                             'allow' => true,
-                            'roles' => ['automation/au-letter-output/action', 'superadmin'],
-                            'actions' => ['create', 'confirm-and-send', 'confirm-and-start-work-flow', 'confirm-step', 'reference', 'answer', 'attach', 'signature', 'confirm-and-receive', 'update', 'delete']
+                            'roles' => ['automation/au-letter-output/manage', 'superadmin'],
+                            'actions' => ['index', 'view', 'confirm-step', 'reference', 'answer', 'attach', 'signature']
+                        ],
+                        [
+                            'allow' => true,
+                            'roles' => ['automation/au-letter/action'],
+                            'actions' => ['view', 'confirm-step', 'reference', 'answer', 'attach', 'signature'],
+                            'matchCallback' => function ($rule, $action) {
+                                $letterId = Yii::$app->request->get('id', 0);
+                                return AuLetterUser::find()->byUser(Yii::$app->user->id)->byLetter($letterId)->exists();
+                            },
                         ],
                     ]
             ]

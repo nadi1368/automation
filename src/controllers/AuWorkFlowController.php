@@ -39,13 +39,8 @@ class AuWorkFlowController extends Controller
                     [
                         [
                             'allow' => true,
-                            'roles' => ['automation/au-work-flow/view', 'superadmin'],
-                            'actions' => ['index', 'view']
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['automation/au-work-flow/action', 'superadmin'],
-                            'actions' => ['create', 'update', 'delete']
+                            'roles' => ['automation/au-work-flow/manage', 'superadmin'],
+                            'actions' => ['index', 'view', 'create', 'update', 'delete']
                         ],
                     ]
             ]

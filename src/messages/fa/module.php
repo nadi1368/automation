@@ -43,7 +43,7 @@ return [
     'Create Letter Output Between System' => 'ایجاد نامه صادره بین سیستمی',
     'Create Letter Output Out of System' => 'ایجاد نامه صادره خارج از سیستم',
     'A Folders' => 'اندیکاتور',
-    'Confirm And Send' => 'تایید و ارسال',
+    'Confirm And Send' => 'تایید نهایی و ثبت شماره',
     'Letter Confirm And Receive' => 'تایید و دریافت',
     'Confirm' => 'تایید',
     'Letter Reference' => 'ارجاع نامه',

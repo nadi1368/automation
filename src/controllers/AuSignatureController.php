@@ -56,13 +56,8 @@ class AuSignatureController extends Controller
                     [
                         [
                             'allow' => true,
-                            'roles' => ['automation/au-signature/view', 'superadmin'],
-                            'actions' => ['index', 'view']
-                        ],
-                        [
-                            'allow' => true,
-                            'roles' => ['automation/au-signature/action', 'superadmin'],
-                            'actions' => ['create', 'update', 'set-in-active', 'set-active', 'delete']
+                            'roles' => ['automation/au-signature/manage', 'superadmin'],
+                            'actions' => ['index', 'view', 'create', 'update', 'set-in-active', 'set-active', 'delete']
                         ],
                     ]
             ]

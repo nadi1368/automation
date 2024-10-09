@@ -72,11 +72,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     },
                     'format' => 'raw',
                 ],
-                //'created_by',
-                //'updated_at',
-                //'updated_by',
-                //'deleted_at',
-                //'slave_id',
 
                 [
                     'class' => 'common\widgets\grid\ActionColumn',
