@@ -85,6 +85,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
     const SCENARIO_CREATE_OUTPUT = 'create_output';
     const SCENARIO_CONFIRM_AND_START_WORK_FLOW = 'confirm_and_start_work_flow';
     const SCENARIO_CREATE_RECORD = 'create_record';
+    const SCENARIO_CONFIRM_AND_NEXT_STEP = 'confirm_and_next_step';
 
     public $error_msg = '';
     public $recipients; // گیرندگان
@@ -149,6 +150,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
         $scenarios[self::SCENARIO_CONFIRM_AND_SEND_RECORD] = ['folder_id', '!status'];
         $scenarios[self::SCENARIO_RECEIVE_INPUT] = ['!type'];
         $scenarios[self::SCENARIO_CONFIRM_AND_START_WORK_FLOW] = ['!status'];
+        $scenarios[self::SCENARIO_CONFIRM_AND_NEXT_STEP] = ['!status'];
 
         return $scenarios;
     }
@@ -680,11 +682,12 @@ class AuLetterBase extends \yii\db\ActiveRecord
      * @return bool
      * بعد از تایید یکی از اشخاص این مرحله
      */
-    public function afterConfirmUSerInCurrentStep()
+    public function afterConfirmUserInCurrentStep()
     {
         $findWait = $this->getWorkFlowUser()->byStep($this->current_step)->byStatus([AuLetterUser::STATUS_WAIT_VIEW, AuLetterUser::STATUS_VIEWED])->limit(1)->one();
         /** @var AuLetterUser $findWait */
         if ($findWait === null || $findWait->operation_type == AuWorkFlow::OPERATION_TYPE_OR) {
+            $this->setScenario(self::SCENARIO_CONFIRM_AND_NEXT_STEP);
             $this->current_step++;
             return $this->save(false);
         }

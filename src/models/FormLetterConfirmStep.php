@@ -67,6 +67,6 @@ class FormLetterConfirmStep extends Model
         if ($this->signature && ($signature = AuSignature::find()->byUser(Yii::$app->user->id)->limit(1)->one()) !== null) {
             $flag = $this->letter->signature($signature);
         }
-        return $flag && $this->letter->afterConfirmUSerInCurrentStep();
+        return $flag && $this->letter->afterConfirmUserInCurrentStep();
     }
 }
