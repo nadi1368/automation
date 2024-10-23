@@ -65,6 +65,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'class' => 'common\widgets\grid\ActionColumn',
                     'template' =>'{view}{copy}',
                     'buttons' => [
+                        'view' => function ($url, AuLetter $model, $key) {
+                            return Html::a('<span class="far fa-eye text-info"></span>', [AuLetter::itemAlias('TypeControllers', $model->type) . '/view', 'id' => $model->id], [
+                                'title' => Yii::t('yii', 'View'),
+                                'class' => 'target',
+                                'data-pjax' => '0'
+                            ]);
+                        },
                         'copy' => function ($url, AuLetter $model, $key) {
                             return Html::a('<span class="far fa-copy text-info"></span>', [AuLetter::itemAlias('TypeControllers', $model->type).'/create', 'copy_id' => $model->id], [
                                 'title' => 'نسخه برداری از متن این نامه برای ایجاد نامه جدید',

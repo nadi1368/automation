@@ -235,6 +235,7 @@ class AuLetterActivityBase extends ActiveRecord implements StorageModel
                     'referenceUserId' => 'Integer',
                     'answer' => 'String',
                     'signatureId' => 'Integer',
+                    'file' => 'String',
                 ],
             ]
         ];

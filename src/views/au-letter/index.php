@@ -65,7 +65,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <div class="card-body">
         <?= GridView::widget([
-                'dataProvider' => $dataProvider,
+            'dataProvider' => $dataProvider,
             //'filterModel' => $searchModel,
             'rowOptions' => function (AuLetter $model, $index, $widget, $grid) {
                 if (!$model->viewed) {
@@ -86,7 +86,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'title',
                     'value' => function (AuLetter $model) {
-                        return Html::tag('i', '', ['class' => AuLetter::itemAlias('ViewedIcon', (int)$model->viewed) . ' mr-1']).$model->title;
+                        return Html::tag('i', '', ['class' => AuLetter::itemAlias('ViewedIcon', (int)$model->viewed) . ' mr-1']) . $model->title;
                     },
                     'format' => 'raw',
                 ],
@@ -107,16 +107,17 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                 ],
                 [
-                        'class' => 'common\widgets\grid\ActionColumn',
-                        'template' =>'{view}',
-                        'buttons' => [
-                            'view' => function ($url,AuLetter  $model, $key) {
-                                return Html::a('<span class="far fa-eye text-info"></span>', [AuLetter::itemAlias('TypeControllers', $model->type).'/view', 'id' => $model->id], [
-                                    'title' => Yii::t('yii', 'View'),
-                                    'class' => 'target'
-                                ]);
-                            },
-                        ]
+                    'class' => 'common\widgets\grid\ActionColumn',
+                    'template' => '{view}',
+                    'buttons' => [
+                        'view' => function ($url, AuLetter $model, $key) {
+                            return Html::a('<span class="far fa-eye text-info"></span>', [AuLetter::itemAlias('TypeControllers', $model->type) . '/view', 'id' => $model->id], [
+                                'title' => Yii::t('yii', 'View'),
+                                'class' => 'target',
+                                'data-pjax' => '0'
+                            ]);
+                        },
+                    ]
                 ],
             ],
         ]); ?>
