@@ -38,7 +38,7 @@ class Module extends \yii\base\Module
 
     public static function createUrl(string $path = null, array $params = [])
     {
-        $moduleId = self::getInstance()?->id;
+        $moduleId = self::getInstance()?->id ?: 'automation';
 
         $path = trim($path ?: '', '/');
         return Url::to([rtrim("/$moduleId/$path", '/'), ...$params]);
