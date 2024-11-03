@@ -338,7 +338,7 @@ class AuFolderController extends Controller
                 $conditions = ['or'];
                 foreach ($searchKeys as $searchKey) {
                     if ($searchKey) {
-                        $conditions[] = ['like', 'title', "%$searchKey%"];
+                        $conditions[] = ['like', 'title', $searchKey];
                     }
                 }
                 $query->andWhere($conditions);
