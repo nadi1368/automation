@@ -97,7 +97,7 @@ class AuLetterController extends Controller
                         ],
                         [
                             'allow' => true,
-                            'roles' => ['automation/au-letter/action'],
+                            'roles' => ['automation/au-letter/action', 'superadmin'],
                             'actions' => ['index'],
                         ],
                         [
