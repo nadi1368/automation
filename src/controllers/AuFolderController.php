@@ -327,6 +327,34 @@ class AuFolderController extends Controller
         return $this->asJson($result);
     }
 
+    public function actionList($q = null, $type = null)
+    {
+        $results = [];
+
+        if (!empty($q) || !empty($type)) {
+            $query = AuFolder::find();
+            if ($q) {
+                $searchKeys = explode(' ', $q ,3);
+                $conditions = ['or'];
+                foreach ($searchKeys as $searchKey) {
+                    if ($searchKey) {
+                        $conditions[] = ['like', 'title', "%$searchKey%"];
+                    }
+                }
+                $query->andWhere($conditions);
+            }
+
+            if ($type) {
+                $query->andWhere(['type' => (int) $type]);
+            }
+
+            $results = array_map(fn ($item) => ['id' => $item->id, 'text'=> $item->title], $query->all());
+        }
+        return $this->asJson([
+            'results' => $results
+        ]);
+    }
+
     /**
      * Finds the AFolder model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
