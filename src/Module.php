@@ -3,6 +3,7 @@
 namespace hesabro\automation;
 
 use Yii;
+use yii\helpers\Url;
 use yii\i18n\PhpMessageSource;
 
 /**
@@ -33,5 +34,13 @@ class Module extends \yii\base\Module
     public static function t($category, $message, $params = [], $language = null): string
     {
         return Yii::t('hesabro/automation/' . $category, $message, $params, $language);
+    }
+
+    public static function createUrl(string $path = null, array $params = [])
+    {
+        $moduleId = self::getInstance()?->id;
+
+        $path = trim($path ?: '', '/');
+        return Url::to([rtrim("/$moduleId/$path", '/'), ...$params]);
     }
 }
