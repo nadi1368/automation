@@ -38,6 +38,7 @@ class AuLetterActivityBase extends ActiveRecord implements StorageModel
     const TYPE_ATTACH = 3; // فایل
     const TYPE_SIGNATURE = 4; //امضا
     const TYPE_CONFIRM = 5; //تایید
+    const TYPE_REJECT = 6; //رد
 
     /** Additional Data */
     public $referenceUserId; // کاربر ارجاع شده
@@ -147,6 +148,7 @@ class AuLetterActivityBase extends ActiveRecord implements StorageModel
                 return $auLetterUser !== null ? Html::tag('label', Html::tag('i', '', ['class' => AuLetterUser::itemAlias('StatusIcon', $auLetterUser->status) . ' mr-1']) . $auLetterUser->user?->fullName, ['class' => 'badge badge-info mr-2 mb-2', 'title' => AuLetterUser::itemAlias('Status', $auLetterUser->status)]) : '';
             case self::TYPE_ANSWER:
             case self::TYPE_CONFIRM:
+            case self::TYPE_REJECT:
                 return nl2br($this->answer);
             case self::TYPE_ATTACH:
                 if ($fileUrl = $this->getStorageFileUrl('file')) ;
@@ -199,6 +201,7 @@ class AuLetterActivityBase extends ActiveRecord implements StorageModel
                     self::TYPE_ATTACH => 'پیوست',
                     self::TYPE_SIGNATURE => 'امضا',
                     self::TYPE_CONFIRM => 'تایید',
+                    self::TYPE_REJECT => 'رد',
                 ],
             'TypeClass' =>
                 [
@@ -207,6 +210,7 @@ class AuLetterActivityBase extends ActiveRecord implements StorageModel
                     self::TYPE_ATTACH => 'primary',
                     self::TYPE_SIGNATURE => 'primary',
                     self::TYPE_CONFIRM => 'success',
+                    self::TYPE_REJECT => 'danger',
                 ],
         ];
         if (isset($code))

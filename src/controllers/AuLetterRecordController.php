@@ -48,7 +48,7 @@ class AuLetterRecordController extends AuLetterController
                         [
                             'allow' => true,
                             'roles' => ['automation/au-letter-record/manage', 'superadmin'],
-                            'actions' => ['index', 'view', 'confirm-step', 'reference', 'answer', 'attach', 'signature']
+                            'actions' => ['index', 'view', 'confirm-step', 'reject-step', 'reference', 'answer', 'attach', 'signature']
                         ],
                         [
                             'allow' => true,

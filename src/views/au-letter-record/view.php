@@ -13,7 +13,7 @@ $this->title = $model->title;
 $this->params['breadcrumbs'][] = ['label' => Module::t('module', 'Au Letters Record'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<?php Pjax::begin(['id'=>'p-jax-letter']) ?>
+<?php Pjax::begin(['id' => 'p-jax-letter']) ?>
 <div class="card">
     <div class="card-header bg-light">
         <?= $this->render('/au-letter/_btn-master', [
@@ -47,7 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'status',
                     'value' => function (AuLetter $model) {
-                        return Html::tag('label',AuLetter::itemAlias('Status', $model->status), ['class' => 'badge badge-' . AuLetter::itemAlias('StatusClass', $model->status)]);
+                        return Html::tag('label', AuLetter::itemAlias('Status', $model->status), ['class' => 'badge badge-' . AuLetter::itemAlias('StatusClass', $model->status)]);
                     },
                     'format' => 'raw',
                 ],
@@ -72,26 +72,33 @@ $this->params['breadcrumbs'][] = $this->title;
         <h4 class="mb-0"><?= Html::encode($model->title) ?></h4>
     </div>
     <div class="card-body border-bottom">
-        <div class="d-flex no-block align-items-center mb-2">
-            <div class="mr-2">گیرندگان:</div>
-            <div class="">
-                <?= $model->showRecipientsList() ?>
+        <?php if (!empty($recipientsList = $model->showRecipientsList())): ?>
+            <div class="d-flex no-block align-items-center mb-2">
+                <div class="mr-2">گیرندگان:</div>
+                <div class="">
+                    <?= $recipientsList ?>
+                </div>
             </div>
-        </div>
-        <div class="d-flex no-block align-items-center mb-2">
-            <div class="mr-2">رونوشت:</div>
-            <div class="">
-                <?= $model->showCCRecipientsList() ?>
+        <?php endif; ?>
+        <?php if (!empty($cCRecipientsList = $model->showCCRecipientsList())): ?>
+            <div class="d-flex no-block align-items-center mb-2">
+                <div class="mr-2">رونوشت:</div>
+                <div class="">
+                    <?= $cCRecipientsList ?>
+                </div>
             </div>
-        </div>
-        <div class="d-flex no-block align-items-center mb-2">
-            <div class="mr-2">ارجاع:</div>
-            <div class="">
-                <?= $model->showReferenceList() ?>
+        <?php endif; ?>
+
+        <?php if (!empty($referenceList = $model->showReferenceList())): ?>
+            <div class="d-flex no-block align-items-center mb-2">
+                <div class="mr-2">ارجاع:</div>
+                <div class="">
+                    <?= $referenceList ?>
+                </div>
             </div>
-        </div>
-        <div class="mb-5"></div>
-        <?= nl2br((string)$model->body) ?>
+        <?php endif; ?>
+        <div class="mb-1"></div>
+        <?= $model->body ?>
         <div class="mb-5"></div>
         <?= $this->render('/au-letter/_signatures', [
             'model' => $model,

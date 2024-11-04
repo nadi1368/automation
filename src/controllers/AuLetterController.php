@@ -10,6 +10,7 @@ use hesabro\automation\models\AuSignature;
 use hesabro\automation\models\FormLetterAnswer;
 use hesabro\automation\models\FormLetterConfirmStep;
 use hesabro\automation\models\FormLetterReference;
+use hesabro\automation\models\FormLetterRejectStep;
 use hesabro\automation\Module;
 use hesabro\helpers\traits\AjaxValidationTrait;
 use Yii;
@@ -93,7 +94,7 @@ class AuLetterController extends Controller
                         [
                             'allow' => true,
                             'roles' => ['automation/au-letter/manage', 'superadmin'],
-                            'actions' => ['index', 'view', 'confirm-step', 'reference', 'answer', 'attach', 'signature']
+                            'actions' => ['index', 'view', 'confirm-step', 'reject-step', 'reference', 'answer', 'attach', 'signature']
                         ],
                         [
                             'allow' => true,
@@ -303,6 +304,51 @@ class AuLetterController extends Controller
         }
         $this->performAjaxValidation($modelAnswer);
         return $this->renderAjax('/au-letter/_form-confirm-step', [
+            'modelAnswer' => $modelAnswer,
+        ]);
+    }
+    /**
+     * @param $id
+     * @return string|\yii\web\Response
+     * @throws BadRequestHttpException
+     * @throws NotFoundHttpException
+     * @throws \yii\base\ExitException
+     */
+    public function actionRejectStep($id)
+    {
+        /** @var $model AuLetter */
+        $model = $this->findModel($id);
+        if (!$model->canRejectInCurrentStep()) {
+            throw new BadRequestHttpException($model->error_msg ?: Module::t('module', "It is not possible to perform this operation"));
+        }
+        $modelAnswer = new FormLetterRejectStep(['letter' => $model]);
+        $result = [
+            'success' => false,
+            'msg' => Module::t('module', "Error In Save Info")
+        ];
+        if ($modelAnswer->load(Yii::$app->request->post()) && $modelAnswer->validate()) {
+
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                $flag = $modelAnswer->save();
+                if ($flag) {
+
+                    $result = [
+                        'success' => true,
+                        'msg' => Module::t('module', "Item Updated")
+                    ];
+                    $transaction->commit();
+                } else {
+                    $transaction->rollBack();
+                }
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                Yii::error($e->getMessage() . $e->getTraceAsString(), Yii::$app->controller->id . '/' . Yii::$app->controller->action->id);
+            }
+            return $this->asJson($result);
+        }
+        $this->performAjaxValidation($modelAnswer);
+        return $this->renderAjax('/au-letter/_form-reject-step', [
             'modelAnswer' => $modelAnswer,
         ]);
     }

@@ -76,6 +76,7 @@ return [
     'Print' => 'چاپ',
     'Au Work Flow' => 'گردش کار',
     'Confirm And Start work flow' => 'تایید مرحله بعد',
-    'Confirm Step' => 'تایید',
+    'Confirm Step' => 'تایید این مرحله',
+    'Reject Step' => 'رد این مرحله',
     'Operation Type' => 'نوع وابستگی اشخاص',
 ];

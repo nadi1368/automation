@@ -293,10 +293,15 @@ class AuLetterBase extends \yii\db\ActiveRecord
 
     public function canUpdate()
     {
+
         if (in_array($this->type, [self::TYPE_INPUT, self::TYPE_OUTPUT]) && $this->input_type != self::INPUT_OUTPUT_SYSTEM && $this->created_at > strtotime("-3 DAY")) {
             // نامه های صادره و وارده که سیستمی نیستند تا 3 روز بعد قابل بروز رسانی می باشند
             return true;
         }
+        if ($this->status == self::STATUS_WAIT_CONFIRM && $this->isWorkFlow && $this->current_step === 0) {
+            return true;
+        }
+
         return $this->status == self::STATUS_DRAFT;
     }
 
@@ -329,6 +334,18 @@ class AuLetterBase extends \yii\db\ActiveRecord
      * تایید نامه در این مرحله توسط شخص مربوطه
      */
     public function canConfirmInCurrentStep()
+    {
+        if ($this->status == self::STATUS_WAIT_CONFIRM && $this->isWorkFlow && $this->current_step > 0) {
+            return $this->getWorkFlowUser()->byStep($this->current_step)->byUser(Yii::$app->user->id)->byStatus([AuLetterUser::STATUS_WAIT_VIEW, AuLetterUser::STATUS_VIEWED])->exists();
+        }
+        return false;
+    }
+
+    /**
+     * @return false
+     * رد نامه در این مرحله توسط شخص مربوطه
+     */
+    public function canRejectInCurrentStep()
     {
         if ($this->status == self::STATUS_WAIT_CONFIRM && $this->isWorkFlow && $this->current_step > 0) {
             return $this->getWorkFlowUser()->byStep($this->current_step)->byUser(Yii::$app->user->id)->byStatus([AuLetterUser::STATUS_WAIT_VIEW, AuLetterUser::STATUS_VIEWED])->exists();
@@ -692,6 +709,22 @@ class AuLetterBase extends \yii\db\ActiveRecord
             return $this->save(false);
         }
         return true;
+    }
+
+    /**
+     * @return bool
+     * بعد از تایید یکی از اشخاص این مرحله
+     */
+    public function afterRejectUserInCurrentStep()
+    {
+        /** @var AuWorkFlow $item */
+        foreach (AuLetterUser::find()->byLetter($this->id)->byType(AuLetterUser::TYPE_WORK_FLOW)->all() as $auUser) {
+            if (!$auUser->softDelete()) {
+                return false;
+            }
+        }
+        $this->current_step = 0;
+        return $this->save(false);
     }
 
     /**

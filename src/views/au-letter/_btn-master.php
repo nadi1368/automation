@@ -51,6 +51,19 @@ use yii\helpers\Url;
         'data-reload-pjax-container-on-show' => 0,
         'data-reload-pjax-container' => 'p-jax-letter',
     ]) : '' ?>
+
+<?= $model->canRejectInCurrentStep() ? Html::a(Module::t('module', 'Reject Step'),
+    'javascript:void(0)', [
+        'title' => Module::t('module', 'Reject Step'),
+        'data-title' => Module::t('module', 'Reject Step'),
+        'class' => 'btn btn-secondary  mr-1',
+        'data-size' => 'modal-lg',
+        'data-toggle' => 'modal',
+        'data-target' => '#modal-pjax',
+        'data-url' => Url::to(['reject-step', 'id' => $model->id]),
+        'data-reload-pjax-container-on-show' => 0,
+        'data-reload-pjax-container' => 'p-jax-letter',
+    ]) : '' ?>
 <?= $model->canReference() ? Html::a(Module::t('module', 'Letter Reference'),
     'javascript:void(0)', [
         'title' => Module::t('module', 'Letter Reference'),
