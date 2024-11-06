@@ -61,7 +61,7 @@ class AuFolderController extends Controller
                         [
                             'allow' => true,
                             'roles' => ['automation/au-folder/manage', 'superadmin'],
-                            'actions' => ['index', 'view', 'create', 'update', 'set-in-active', 'set-active', 'delete']
+                            'actions' => ['index', 'view', 'create', 'update', 'set-in-active', 'set-active', 'delete', 'list']
                         ],
                     ]
             ]
@@ -325,6 +325,34 @@ class AuFolderController extends Controller
         }
 
         return $this->asJson($result);
+    }
+
+    public function actionList($q = null, $type = null)
+    {
+        $results = [];
+
+        if (!empty($q) || !empty($type)) {
+            $query = AuFolder::find();
+            if ($q) {
+                $searchKeys = explode(' ', $q ,3);
+                $conditions = ['or'];
+                foreach ($searchKeys as $searchKey) {
+                    if ($searchKey) {
+                        $conditions[] = ['like', 'title', $searchKey];
+                    }
+                }
+                $query->andWhere($conditions);
+            }
+
+            if ($type) {
+                $query->andWhere(['type' => (int) $type]);
+            }
+
+            $results = array_map(fn ($item) => ['id' => $item->id, 'text'=> $item->title], $query->all());
+        }
+        return $this->asJson([
+            'results' => $results
+        ]);
     }
 
     /**
