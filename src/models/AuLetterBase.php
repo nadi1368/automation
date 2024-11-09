@@ -137,7 +137,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
             [['input_number'], 'default', 'value' => ''],
             [['input_type'], 'default', 'value' => 1],
             [['folder_id'], 'exist', 'skipOnError' => true, 'targetClass' => AuFolder::class, 'targetAttribute' => ['folder_id' => 'id']],
-            ['workflow_id_value', 'exist', 'targetClass' => AuWorkFlow::class, 'targetAttribute' => ['workflow_id' => 'id']]
+            ['workflow_id_value', 'exist', 'targetClass' => AuWorkFlow::class, 'targetAttribute' => ['workflow_id_value' => 'id']]
         ];
     }
 
@@ -922,6 +922,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
                 $this->status = self::STATUS_DRAFT;
             }
         }
+
         if (in_array($this->getScenario(), [self::SCENARIO_CREATE_INTERNAL, self::SCENARIO_CREATE_INPUT, self::SCENARIO_CREATE_OUTPUT, self::SCENARIO_CREATE_RECORD]) && ($totalStep = count($this->workFlow?->steps ?: [])) > 0) {
             $this->status = self::STATUS_WAIT_CONFIRM; // نامه داراری گردش کار می باشد
             $this->current_step = 0;

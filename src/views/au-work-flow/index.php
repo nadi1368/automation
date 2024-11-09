@@ -52,7 +52,6 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             //'filterModel' => $searchModel,
             'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
                 [
                     'class' => 'kartik\grid\ExpandRowColumn',
                     'expandIcon' => '<span class="fal fa-chevron-down" style="font-size: 13px"></span>',
@@ -64,6 +63,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         ]);
                     },
                 ],
+                ['class' => 'yii\grid\SerialColumn'],
+                'id',
                 'title',
                 'letter_type' => [
                     'attribute' => 'letter_type',

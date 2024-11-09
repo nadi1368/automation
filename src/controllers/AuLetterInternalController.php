@@ -120,7 +120,6 @@ class AuLetterInternalController extends AuLetterController
                         $transaction->rollBack();
                     }
                 } catch (\Exception $e) {
-                    dd($e->getMessage());
                     $transaction->rollBack();
                     Yii::error($e->getMessage() . $e->getTraceAsString(), Yii::$app->controller->id . '/' . Yii::$app->controller->action->id);
                 }

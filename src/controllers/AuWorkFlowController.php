@@ -41,7 +41,7 @@ class AuWorkFlowController extends Controller
                         [
                             'allow' => true,
                             'roles' => ['automation/au-work-flow/manage', 'superadmin'],
-                            'actions' => ['index', 'view', 'create', 'update', 'delete']
+                            'actions' => ['index', 'view', 'create', 'update', 'delete', 'find']
                         ],
                     ]
             ]
@@ -214,6 +214,35 @@ class AuWorkFlowController extends Controller
         }
         return $this->asJson($result);
     }
+
+    public function actionFind($q = null, $type = null)
+    {
+        $results = [];
+
+        if (!empty($q) || !empty($type)) {
+            $query = AuWorkFlow::find();
+            if ($q) {
+                $searchKeys = explode(' ', $q ,3);
+                $conditions = ['or'];
+                foreach ($searchKeys as $searchKey) {
+                    if ($searchKey) {
+                        $conditions[] = ['like', 'title', $searchKey];
+                    }
+                }
+                $query->andWhere($conditions);
+            }
+
+            if ($type) {
+                $query->andWhere(['type' => (int) $type]);
+            }
+
+            $results = array_map(fn ($item) => ['id' => $item->id, 'text'=> $item->title], $query->all());
+        }
+        return $this->asJson([
+            'results' => $results
+        ]);
+    }
+
     /**
      * Finds the AuWorkFlow model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
