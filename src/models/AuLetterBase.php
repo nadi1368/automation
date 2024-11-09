@@ -47,13 +47,14 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property AuLetterUser[] $cCRecipientUser
  * @property AuLetterUser[] $reference
  * @property AuLetterActivity[] $activity
- * @property AuWorkFlow[] $workFlow
+ * @property AuWorkFlow $workFlow
  * @property AuFolder $folder
  * @property object $creator
  * @property object $update
  * @property string $printNumber
  * @property string $printCountAttach
  * @property bool $viewed
+ * @property bool $isWorkFlow
  */
 class AuLetterBase extends \yii\db\ActiveRecord
 {
@@ -97,8 +98,9 @@ class AuLetterBase extends \yii\db\ActiveRecord
     public $files_text;
     public $header_text = '';
     public $footer_text = '';
-    public $isWorkFlow = false;
     public $total_step = 0;
+
+    public mixed $workflow_id = null;
     // ----------------------------
 
     private $_viewd = null;
@@ -133,6 +135,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
             [['input_number'], 'default', 'value' => ''],
             [['input_type'], 'default', 'value' => 1],
             [['folder_id'], 'exist', 'skipOnError' => true, 'targetClass' => AuFolder::class, 'targetAttribute' => ['folder_id' => 'id']],
+            ['workflow_id', 'exist', 'targetClass' => AuWorkFlow::class, 'targetAttribute' => ['workflow_id' => 'id']]
         ];
     }
 
@@ -140,10 +143,10 @@ class AuLetterBase extends \yii\db\ActiveRecord
     {
         $scenarios = parent::scenarios();
 
-        $scenarios[self::SCENARIO_CREATE_INTERNAL] = ['title', 'folder_id', 'date', 'body', 'recipients', 'cc_recipients'];
+        $scenarios[self::SCENARIO_CREATE_INTERNAL] = ['title', 'folder_id', 'date', 'body', 'recipients', 'cc_recipients', 'workflow_id'];
         $scenarios[self::SCENARIO_CREATE_RECORD] = ['title', 'date', 'body'];
-        $scenarios[self::SCENARIO_CREATE_INPUT] = ['title', 'folder_id', 'date', 'body', 'recipients', 'cc_recipients', 'sender_id', 'input_type', 'input_number'];
-        $scenarios[self::SCENARIO_CREATE_OUTPUT] = ['title', 'folder_id', 'date', 'body', 'sender_id', 'recipients', 'cc_recipients', 'input_type'];
+        $scenarios[self::SCENARIO_CREATE_INPUT] = ['title', 'folder_id', 'date', 'body', 'recipients', 'cc_recipients', 'sender_id', 'input_type', 'input_number', 'workflow_id'];
+        $scenarios[self::SCENARIO_CREATE_OUTPUT] = ['title', 'folder_id', 'date', 'body', 'sender_id', 'recipients', 'cc_recipients', 'input_type', 'workflow_id'];
         $scenarios[self::SCENARIO_CONFIRM_AND_RECEIVE_INPUT] = ['folder_id', 'recipients', 'cc_recipients'];
         $scenarios[self::SCENARIO_CONFIRM_AND_SEND_INTERNAL] = ['folder_id', '!status'];
         $scenarios[self::SCENARIO_CONFIRM_AND_SEND_OUTPUT] = ['folder_id', '!status'];
@@ -169,6 +172,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
             'type' => Module::t('module', 'Type'),
             'title' => 'موضوع',
             'folder_id' => 'اندیکاتور',
+            'workflow_id' => 'گردش کار',
             'body' => Module::t('module', 'Description'),
             'number' => Module::t('module', 'Number'),
             'input_number' => 'شماره نامه وارده',
@@ -254,7 +258,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
      */
     public function getWorkFlow()
     {
-        return $this->hasMany(AuWorkFlow::class, ['letter_type' => 'type']);
+        return $this->hasOne(AuWorkFlow::class, ['id' => 'workflow_id']);
     }
 
     /**
@@ -279,6 +283,11 @@ class AuLetterBase extends \yii\db\ActiveRecord
     public function getUpdate()
     {
         return $this->hasOne(Module::getInstance()->user, ['id' => 'updated_by']);
+    }
+
+    public function getIsWorkFlow()
+    {
+        return !empty($this->workflow_id);
     }
 
     /**
@@ -336,7 +345,11 @@ class AuLetterBase extends \yii\db\ActiveRecord
     public function canConfirmInCurrentStep()
     {
         if ($this->status == self::STATUS_WAIT_CONFIRM && $this->isWorkFlow && $this->current_step > 0) {
-            return $this->getWorkFlowUser()->byStep($this->current_step)->byUser(Yii::$app->user->id)->byStatus([AuLetterUser::STATUS_WAIT_VIEW, AuLetterUser::STATUS_VIEWED])->exists();
+            return $this->getWorkFlowUser()
+                ->byStep($this->current_step)
+                ->byUser(Yii::$app->user->id)
+                ->byStatus([AuLetterUser::STATUS_WAIT_VIEW, AuLetterUser::STATUS_VIEWED])
+                ->exists();
         }
         return false;
     }
@@ -348,7 +361,11 @@ class AuLetterBase extends \yii\db\ActiveRecord
     public function canRejectInCurrentStep()
     {
         if ($this->status == self::STATUS_WAIT_CONFIRM && $this->isWorkFlow && $this->current_step > 0) {
-            return $this->getWorkFlowUser()->byStep($this->current_step)->byUser(Yii::$app->user->id)->byStatus([AuLetterUser::STATUS_WAIT_VIEW, AuLetterUser::STATUS_VIEWED])->exists();
+            return $this->getWorkFlowUser()
+                ->byStep($this->current_step)
+                ->byUser(Yii::$app->user->id)
+                ->byStatus([AuLetterUser::STATUS_WAIT_VIEW, AuLetterUser::STATUS_VIEWED])
+                ->exists();
         }
         return false;
     }
@@ -627,22 +644,23 @@ class AuLetterBase extends \yii\db\ActiveRecord
      */
     public function confirmAndStartWorkFlow()
     {
-        foreach ($this->getWorkFlow()->orderBy(['order_by' => SORT_ASC])->all() as $item) {
-            /** @var AuWorkFlow $item */
+        $workFlow = $this->workFlow;
+        /** @var AuWorkFlowStep $item */
+        foreach (($workFlow?->stepsByOrder ?: []) as $item) {
             foreach (is_array($item->users) ? $item->users : [] as $userId) {
                 $auLetterUser = new AuLetterUser(['type' => AuLetterUser::TYPE_WORK_FLOW]);
-                $auLetterUser->title = $item->title;
+                $auLetterUser->title = $workFlow->title;
                 $auLetterUser->letter_id = $this->id;
                 $auLetterUser->user_id = $userId;
-                $auLetterUser->step = $item->order_by;
+                $auLetterUser->step = $item->step;
                 $auLetterUser->operation_type = $item->operation_type;
                 if (!$auLetterUser->save()) {
                     $this->addError('recipients', $auLetterUser->getFirstError('user_id'));
                     return false;
                 }
             }
-
         }
+
         $this->current_step = 1;
         return $this->save(false);
     }
@@ -703,7 +721,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
     {
         $findWait = $this->getWorkFlowUser()->byStep($this->current_step)->byStatus([AuLetterUser::STATUS_WAIT_VIEW, AuLetterUser::STATUS_VIEWED])->limit(1)->one();
         /** @var AuLetterUser $findWait */
-        if ($findWait === null || $findWait->operation_type == AuWorkFlow::OPERATION_TYPE_OR) {
+        if ($findWait === null || $findWait->operation_type == AuWorkFlowStep::OPERATION_TYPE_OR) {
             $this->setScenario(self::SCENARIO_CONFIRM_AND_NEXT_STEP);
             $this->current_step++;
             return $this->save(false);
@@ -892,9 +910,8 @@ class AuLetterBase extends \yii\db\ActiveRecord
                 $this->status = self::STATUS_DRAFT;
             }
         }
-        if (in_array($this->getScenario(), [self::SCENARIO_CREATE_INTERNAL, self::SCENARIO_CREATE_INPUT, self::SCENARIO_CREATE_OUTPUT, self::SCENARIO_CREATE_RECORD]) && ($totalStep = (int)$this->getWorkFlow()->max('order_by')) > 0) {
+        if (in_array($this->getScenario(), [self::SCENARIO_CREATE_INTERNAL, self::SCENARIO_CREATE_INPUT, self::SCENARIO_CREATE_OUTPUT, self::SCENARIO_CREATE_RECORD]) && ($totalStep = count($this->workFlow?->steps ?: [])) > 0) {
             $this->status = self::STATUS_WAIT_CONFIRM; // نامه داراری گردش کار می باشد
-            $this->isWorkFlow = true;
             $this->current_step = 0;
             $this->total_step = $totalStep;
         }
@@ -1008,9 +1025,8 @@ class AuLetterBase extends \yii\db\ActiveRecord
                     'files_text' => 'String',
                     'header_text' => 'String',
                     'footer_text' => 'String',
-                    'isWorkFlow' => 'Boolean',
                     'total_step' => 'Integer',
-
+                    'workflow_id' => 'Integer'
                 ],
             ],
             'softDeleteBehavior' => [

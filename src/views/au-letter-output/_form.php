@@ -3,6 +3,7 @@
 use hesabro\automation\models\AuClientGroup;
 use hesabro\automation\models\AuLetter;
 use hesabro\automation\models\AuUser;
+use hesabro\automation\models\AuWorkFlow;
 use hesabro\automation\Module;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
@@ -29,8 +30,12 @@ $settingsClass = Module::getInstance()->settings;
     <?php $form = ActiveForm::begin(); ?>
     <div class="card-body">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+            </div>
+
+            <div class="col-md-3">
+                <?= $form->field($model, 'workflow_id')->dropdownList(AuWorkFlow::itemAlias('OutputFlow'), ['prompt'=>Module::t('module','Select')]) ?>
             </div>
 
             <div class="col-md-3">
@@ -59,7 +64,7 @@ $settingsClass = Module::getInstance()->settings;
             <div class="col-md-3 date-input">
                 <?= $form->field($model, 'date')->widget(MaskedInput::class, ['mask' => '9999/99/99']) ?>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-12">
                 <?= $form->field($model, 'sender_id')->widget(Select2::class, [
                     'data' => $userClass::getUserWithRoles(Module::getInstance()->employeeRole),
                     'options' => [

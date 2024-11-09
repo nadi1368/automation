@@ -2,6 +2,7 @@
 
 namespace hesabro\automation\controllers;
 
+use hesabro\automation\models\AuWorkFlowStep;
 use hesabro\helpers\traits\AjaxValidationTrait;
 use Yii;
 use hesabro\automation\models\AuLetter;
@@ -53,11 +54,11 @@ class AuWorkFlowController extends Controller
      */
     public function actionIndex()
     {
-        $dataProvider = new ArrayDataProvider([
-            'allModels' => AuLetter::itemAlias('Type'),
-        ]);
+        $searchModel = new AuWorkFlowSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
+            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -79,17 +80,22 @@ class AuWorkFlowController extends Controller
      * @param $type
      * @return mixed
      */
-    public function actionCreate($type)
+    public function actionCreate()
     {
-        $title = $this->findModelLetterType($type);
-        $model = new AuWorkFlow(['letter_type'=>$type]);
+        $model = new AuWorkFlow();
 
         $result = [
             'success' => false,
             'msg' => Yii::t("app", "Error In Save Info")
         ];
-        if ($this->request->isPost) {
-            if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+
+        if ($this->request->isPost && $model->load(Yii::$app->request->post())) {
+            $model->steps = AuWorkFlowStep::createMultiple(AuWorkFlowStep::class);
+            $valid = AuWorkFlowStep::loadMultiple($model->steps, Yii::$app->request->post());
+            $valid = $valid && AuWorkFlowStep::validateMultiple($model->steps);
+            $valid = $valid && $model->validate();
+
+            if ($valid) {
                 $transaction = Yii::$app->db->beginTransaction();
                 try {
                     $flag = $model->save(false);
@@ -108,9 +114,11 @@ class AuWorkFlowController extends Controller
                 }
                 return $this->asJson($result);
             }
-        }else {
-            $model->loadDefaultValues();
         }
+
+        !$model->hasErrors() && $model->loadDefaultValues();
+        $model->steps = [new AuWorkFlowStep()];
+
         $this->performAjaxValidation($model);
         return $this->renderAjax('_form', [
             'model' => $model,
@@ -132,25 +140,33 @@ class AuWorkFlowController extends Controller
             'success' => false,
             'msg' => Module::t('module', "Error In Save Info")
         ];
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $transaction = Yii::$app->db->beginTransaction();
-            try {
-                $flag = $model->save(false);
-                if ($flag) {
-                    $result = [
-                        'success' => true,
-                        'msg' => Module::t('module', "Item Updated")
-                    ];
-                    $transaction->commit();
-                } else {
+        if ($model->load(Yii::$app->request->post())) {
+            $model->steps = AuWorkFlowStep::createMultiple(AuWorkFlowStep::class);
+            $valid = AuWorkFlowStep::loadMultiple($model->steps, Yii::$app->request->post());
+            $valid = $valid && AuWorkFlowStep::validateMultiple($model->steps);
+            $valid = $valid && $model->validate();
+
+            if ($valid) {
+                $transaction = Yii::$app->db->beginTransaction();
+                try {
+                    $flag = $model->save(false);
+                    if ($flag) {
+                        $result = [
+                            'success' => true,
+                            'msg' => Module::t('module', "Item Updated")
+                        ];
+                        $transaction->commit();
+                    } else {
+                        $transaction->rollBack();
+                    }
+                } catch (\Exception $e) {
                     $transaction->rollBack();
+                    Yii::error($e->getMessage() . $e->getTraceAsString(), Yii::$app->controller->id.'/'.Yii::$app->controller->action->id);
                 }
-            } catch (\Exception $e) {
-                $transaction->rollBack();
-                Yii::error($e->getMessage() . $e->getTraceAsString(), Yii::$app->controller->id.'/'.Yii::$app->controller->action->id);
+                return $this->asJson($result);
             }
-            return $this->asJson($result);
         }
+
         $this->performAjaxValidation($model);
         return $this->renderAjax('_form', [
             'model' => $model,

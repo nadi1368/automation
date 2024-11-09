@@ -36,6 +36,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     'format' => 'raw',
                 ],
                 [
+                    'attribute' => 'workflow_id',
+                    'value' => function (AuLetter $model) {
+                        return $model->workFlow?->title;
+                    },
+                    'format' => 'raw',
+                ],
+                [
                     'attribute' => 'folder_id',
                     'value' => function (AuLetter $model) {
                         return $model->folder?->title;

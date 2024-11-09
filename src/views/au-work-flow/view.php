@@ -1,6 +1,7 @@
 <?php
 
 use hesabro\automation\models\AuWorkFlow;
+use hesabro\automation\models\AuWorkFlowStep;
 use hesabro\automation\Module;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -49,10 +50,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <tbody>
             <?php foreach ($items as $index => $item): ?>
                 <tr>
-                    <td><?= $item->order_by ?></td>
                     <td><?= Html::encode($item->title); ?></td>
-                    <td><?= $item->showUsersList() ?></td>
-                    <td><?= AuWorkFlow::itemAlias('OperationType', $item->operation_type) ?></td>
                     <th><?php
                         $dropDownItems=[];
                         if ($item->canUpdate()) {

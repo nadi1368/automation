@@ -4,6 +4,7 @@ namespace hesabro\automation\controllers;
 
 use hesabro\automation\events\AuLetterInputEvent;
 use hesabro\automation\models\AuLetterUser;
+use hesabro\automation\models\AuWorkFlow;
 use hesabro\automation\Module;
 use hesabro\helpers\traits\AjaxValidationTrait;
 use Yii;

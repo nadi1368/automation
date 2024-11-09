@@ -1,5 +1,6 @@
 <?php
 
+use hesabro\automation\models\AuWorkFlow;
 use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 
@@ -16,15 +17,13 @@ use yii\bootstrap4\ActiveForm;
     ]); ?>
     <div class="card-body">
         <div class="row">
-            <?= $form->field($model, 'id') ?>
+            <div class="col-12 col-md-3">
+                <?= $form->field($model, 'title') ?>
+            </div>
 
-            <?= $form->field($model, 'title') ?>
-
-            <?= $form->field($model, 'letter_type') ?>
-
-            <?= $form->field($model, 'order_by') ?>
-
-            <?= $form->field($model, 'operation_type') ?>
+            <div class="col-12 col-md-3">
+                <?= $form->field($model, 'letter_type')->dropDownList(AuWorkFlow::itemAlias('LetterType')) ?>
+            </div>
 
             <div class="col align-self-center text-right">
                 <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

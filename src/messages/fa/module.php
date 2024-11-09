@@ -79,4 +79,12 @@ return [
     'Confirm Step' => 'تایید این مرحله',
     'Reject Step' => 'رد این مرحله',
     'Operation Type' => 'نوع وابستگی اشخاص',
+    'Letter Type' => 'نوع نامه',
+    'Order By' => 'ترتیب نمایش',
+    'Steps' => 'مراحل',
+    'Step' => 'مرحله',
+    'All Persons' => 'همه اشخاص',
+    'Only One Person' => 'تنها یکی از اشخاص',
+    'Invalid Value' => 'مقدار نامعتبر',
+    'All' => 'همه'
 ];
