@@ -18,7 +18,6 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $id
  * @property string|null $title
  * @property int|null $letter_type نوع نامه
- * @property int|null $operation_type AND OR
  * @property string|null $additional_data
  * @property int $status
  * @property int $created_at
@@ -160,8 +159,9 @@ class AuWorkFlowBase extends \yii\db\ActiveRecord
     {
         if ($this->isNewRecord) {
             $this->status = self::STATUS_ACTIVE;
-            $this->letter_type = $this->letter_type == self::AU_LETTER_TYPE_ALL ? null : $this->letter_type;
         }
+
+        $this->letter_type = (int) $this->letter_type ? $this->letter_type : null;
         return parent::beforeSave($insert);
     }
 

@@ -33,7 +33,7 @@ $userClass = Module::getInstance()->user;
             </div>
 
             <div class="col-md-3">
-                <?= $form->field($model, 'workflow_id')->dropdownList(AuWorkFlow::itemAlias('InternalFlow'), ['prompt'=>Module::t('module','Select')]) ?>
+                <?= $form->field($model, 'workflow_id_value')->dropdownList(AuWorkFlow::itemAlias('InternalFlow'), ['prompt'=>Module::t('module','Select')]) ?>
             </div>
 
             <div class="col-md-3">

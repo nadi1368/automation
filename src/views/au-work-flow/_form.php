@@ -35,6 +35,7 @@ JqueryUIAsset::register($this);
             <div class="col-md-6">
                 <?= $form->field($model, 'letter_type')
                     ->dropDownList(AuWorkFlow::itemAlias('LetterType'), [
+                        'value' => $model->isNewRecord ? null : (int) $model->letter_type,
                         'prompt' => Module::t('module', "Select")
                     ]);
                 ?>

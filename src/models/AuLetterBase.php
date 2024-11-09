@@ -55,6 +55,8 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property string $printCountAttach
  * @property bool $viewed
  * @property bool $isWorkFlow
+ * @property int|null $workflow_id
+ * @property int|null $workflow_id_value
  */
 class AuLetterBase extends \yii\db\ActiveRecord
 {
@@ -100,7 +102,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
     public $footer_text = '';
     public $total_step = 0;
 
-    public mixed $workflow_id = null;
+    public mixed $workflow_id_value = null;
     // ----------------------------
 
     private $_viewd = null;
@@ -135,7 +137,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
             [['input_number'], 'default', 'value' => ''],
             [['input_type'], 'default', 'value' => 1],
             [['folder_id'], 'exist', 'skipOnError' => true, 'targetClass' => AuFolder::class, 'targetAttribute' => ['folder_id' => 'id']],
-            ['workflow_id', 'exist', 'targetClass' => AuWorkFlow::class, 'targetAttribute' => ['workflow_id' => 'id']]
+            ['workflow_id_value', 'exist', 'targetClass' => AuWorkFlow::class, 'targetAttribute' => ['workflow_id' => 'id']]
         ];
     }
 
@@ -143,10 +145,10 @@ class AuLetterBase extends \yii\db\ActiveRecord
     {
         $scenarios = parent::scenarios();
 
-        $scenarios[self::SCENARIO_CREATE_INTERNAL] = ['title', 'folder_id', 'date', 'body', 'recipients', 'cc_recipients', 'workflow_id'];
+        $scenarios[self::SCENARIO_CREATE_INTERNAL] = ['title', 'folder_id', 'date', 'body', 'recipients', 'cc_recipients', 'workflow_id_value'];
         $scenarios[self::SCENARIO_CREATE_RECORD] = ['title', 'date', 'body'];
-        $scenarios[self::SCENARIO_CREATE_INPUT] = ['title', 'folder_id', 'date', 'body', 'recipients', 'cc_recipients', 'sender_id', 'input_type', 'input_number', 'workflow_id'];
-        $scenarios[self::SCENARIO_CREATE_OUTPUT] = ['title', 'folder_id', 'date', 'body', 'sender_id', 'recipients', 'cc_recipients', 'input_type', 'workflow_id'];
+        $scenarios[self::SCENARIO_CREATE_INPUT] = ['title', 'folder_id', 'date', 'body', 'recipients', 'cc_recipients', 'sender_id', 'input_type', 'input_number', 'workflow_id_value'];
+        $scenarios[self::SCENARIO_CREATE_OUTPUT] = ['title', 'folder_id', 'date', 'body', 'sender_id', 'recipients', 'cc_recipients', 'input_type', 'workflow_id_value'];
         $scenarios[self::SCENARIO_CONFIRM_AND_RECEIVE_INPUT] = ['folder_id', 'recipients', 'cc_recipients'];
         $scenarios[self::SCENARIO_CONFIRM_AND_SEND_INTERNAL] = ['folder_id', '!status'];
         $scenarios[self::SCENARIO_CONFIRM_AND_SEND_OUTPUT] = ['folder_id', '!status'];
@@ -173,6 +175,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
             'title' => 'موضوع',
             'folder_id' => 'اندیکاتور',
             'workflow_id' => 'گردش کار',
+            'workflow_id_value' => 'گردش کار',
             'body' => Module::t('module', 'Description'),
             'number' => Module::t('module', 'Number'),
             'input_number' => 'شماره نامه وارده',
@@ -283,6 +286,15 @@ class AuLetterBase extends \yii\db\ActiveRecord
     public function getUpdate()
     {
         return $this->hasOne(Module::getInstance()->user, ['id' => 'updated_by']);
+    }
+
+    public function getWorkflow_id()
+    {
+        if ($this->type === self::TYPE_RECORD) {
+            return Module::getInstance()->settings::get('automation_record_workflow_id', null);
+        }
+
+        return $this->workflow_id_value;
     }
 
     public function getIsWorkFlow()
@@ -1026,7 +1038,7 @@ class AuLetterBase extends \yii\db\ActiveRecord
                     'header_text' => 'String',
                     'footer_text' => 'String',
                     'total_step' => 'Integer',
-                    'workflow_id' => 'Integer'
+                    'workflow_id_value' => 'Integer'
                 ],
             ],
             'softDeleteBehavior' => [

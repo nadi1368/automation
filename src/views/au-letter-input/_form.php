@@ -31,7 +31,7 @@ $userClass = Module::getInstance()->user;
                 <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
             </div>
             <div class="col-md-3">
-                <?= $form->field($model, 'workflow_id')->dropdownList(AuWorkFlow::itemAlias('InputFlow'), ['prompt'=>Module::t('module','Select')]) ?>
+                <?= $form->field($model, 'workflow_id_value')->dropdownList(AuWorkFlow::itemAlias('InputFlow'), ['prompt'=>Module::t('module','Select')]) ?>
             </div>
             <div class="col-md-3">
                 <?php Pjax::begin(['id' => 'p-jax-au-form']) ?>

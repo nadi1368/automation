@@ -35,7 +35,7 @@ $settingsClass = Module::getInstance()->settings;
             </div>
 
             <div class="col-md-3">
-                <?= $form->field($model, 'workflow_id')->dropdownList(AuWorkFlow::itemAlias('OutputFlow'), ['prompt'=>Module::t('module','Select')]) ?>
+                <?= $form->field($model, 'workflow_id_value')->dropdownList(AuWorkFlow::itemAlias('OutputFlow'), ['prompt'=>Module::t('module','Select')]) ?>
             </div>
 
             <div class="col-md-3">
