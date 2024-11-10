@@ -1,6 +1,6 @@
 <?php
 
-namespace hesabro\automation;
+namespace hesabro\automation\bundles;
 
 use yii\web\AssetBundle;
 

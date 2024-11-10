@@ -9,6 +9,7 @@ use hesabro\errorlog\behaviors\TraceBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\behaviors\BlameableBehavior;
 use hesabro\helpers\behaviors\JsonAdditional;
+use yii\helpers\ArrayHelper;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
 
 /**
@@ -17,8 +18,6 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int $id
  * @property string|null $title
  * @property int|null $letter_type نوع نامه
- * @property int|null $order_by
- * @property int|null $operation_type AND OR
  * @property string|null $additional_data
  * @property int $status
  * @property int $created_at
@@ -27,20 +26,24 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int|null $updated_by
  * @property int $deleted_at
  * @property int $slave_id
+ * @property-read string|null $letterTypeTitle
+ * @property-read object $update
+ * @property-read object $creator
+ * @property-read AuWorkFlowStep[] $stepsByOrder
  */
 class AuWorkFlowBase extends \yii\db\ActiveRecord
 {
     const STATUS_DELETED = 0;
+
     const STATUS_ACTIVE = 1;
+
     const STATUS_INACTIVE = 2;
 
     const SCENARIO_CREATE = 'create';
 
-    const OPERATION_TYPE_AND = 1;
-    const OPERATION_TYPE_OR = 2;
+    const AU_LETTER_TYPE_ALL = 0;
 
-    /** AdditionalData */
-    public $users;
+    public mixed $steps = [];
 
     /**
      * {@inheritdoc}
@@ -56,10 +59,11 @@ class AuWorkFlowBase extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['letter_type', 'order_by', 'operation_type', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'slave_id'], 'integer'],
-            [['letter_type', 'title', 'operation_type', 'users'], 'required'],
+            [['letter_type', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'slave_id'], 'integer'],
+            [['title', 'steps'], 'required'],
             [['title'], 'string', 'max' => 64],
-            [['users'], 'each', 'rule' => ['integer']],
+            ['letter_type', 'in', 'range' => array_keys(self::itemAlias('LetterType'))],
+            ['steps', 'validateStep']
         ];
     }
 
@@ -72,8 +76,6 @@ class AuWorkFlowBase extends \yii\db\ActiveRecord
             'id' => Module::t('module', 'ID'),
             'title' => Module::t('module', 'Title'),
             'letter_type' => Module::t('module', 'Letter Type'),
-            'order_by' => Module::t('module', 'Order By'),
-            'operation_type' => Module::t('module', 'Operation Type'),
             'additional_data' => Module::t('module', 'Additional Data'),
             'status' => Module::t('module', 'Status'),
             'created_at' => Module::t('module', 'Created At'),
@@ -81,9 +83,18 @@ class AuWorkFlowBase extends \yii\db\ActiveRecord
             'updated_at' => Module::t('module', 'Updated At'),
             'updated_by' => Module::t('module', 'Updated By'),
             'deleted_at' => Module::t('module', 'Deleted At'),
-            'slave_id' => Module::t('module', 'Slave ID'),
-            'users' => 'اشخاص این مرحله',
+            'slave_id' => Module::t('module', 'Slave ID')
         ];
+    }
+
+    public function validateStep($attribute)
+    {
+        foreach ($this->steps as $step) {
+            if (!($step instanceof AuWorkFlowStep)) {
+                $this->addError($attribute, Module::t('module', 'Invalid Value'));
+                break;
+            }
+        }
     }
 
     /**
@@ -100,6 +111,28 @@ class AuWorkFlowBase extends \yii\db\ActiveRecord
     public function getUpdate()
     {
         return $this->hasOne(Module::getInstance()->user, ['id' => 'updated_by']);
+    }
+
+    public function getLetterTypeTitle(): ?string
+    {
+        return self::itemAlias('LetterType', $this->letter_type ?: self::AU_LETTER_TYPE_ALL);
+    }
+
+    /**
+     * @return AuWorkFlowStep[]
+     */
+    public function getStepsByOrder(): array
+    {
+        $steps = $this->steps ?: [];
+        usort($steps, function(AuWorkFlowStep $a, AuWorkFlowStep$b) {
+            if ($a->step == $b->step) {
+                return 0;
+            }
+
+            return ($a->step < $b->step) ? -1 : 1;
+        });
+
+        return $steps;
     }
 
     /**
@@ -122,48 +155,41 @@ class AuWorkFlowBase extends \yii\db\ActiveRecord
         return true;
     }
 
-    /**
-     * @return string
-     */
-    public function showUsersList()
-    {
-        $users = '';
-        foreach (is_array($this->users) ? $this->users : [] as $userId) {
-            $userClass = Module::getInstance()->user;
-            if (($user = $userClass::findOne($userId)) !== null) {
-                $users .= $user->getLink('badge badge-info mr-1 mb-1 pull-right');
-            }
-        }
-        return $users;
-    }
-
-    public static function itemAlias($type, $code = NULL)
-    {
-
-        $_items = [
-            'OperationType' => [
-                self::OPERATION_TYPE_AND => 'همه اشخاص',
-                self::OPERATION_TYPE_OR => 'تنها یکی از اشخاص',
-            ]
-        ];
-        if (isset($code))
-            return isset($_items[$type][$code]) ? $_items[$type][$code] : false;
-        else
-            return isset($_items[$type]) ? $_items[$type] : false;
-    }
-
-    public function afterSoftDelete()
-    {
-        self::updateAllCounters(['order_by' => -1], ['AND', ['letter_type' => $this->letter_type], ['>', 'order_by', $this->order_by]]);
-    }
-
     public function beforeSave($insert)
     {
         if ($this->isNewRecord) {
             $this->status = self::STATUS_ACTIVE;
-            $this->order_by = (int)self::find()->byLetterType($this->letter_type)->max('order_by') + 1;
         }
+
+        $this->letter_type = (int) $this->letter_type ? $this->letter_type : null;
         return parent::beforeSave($insert);
+    }
+
+    public static function itemAlias($type, $code = null)
+    {
+        $items = [
+            'LetterType' => [
+                self::AU_LETTER_TYPE_ALL => Module::t('module', 'All'),
+                ...AuLetter::itemAlias('Type'),
+            ],
+            'InternalFlow' => ArrayHelper::map(AuWorkFlow::find()->andWhere([
+                'OR',
+                ['=', 'letter_type', AuLetter::TYPE_INTERNAL],
+                ['IS', 'letter_type', null],
+            ])->all(), 'id', 'title'),
+            'InputFlow' => ArrayHelper::map(AuWorkFlow::find()->andWhere([
+                'OR',
+                ['=', 'letter_type', AuLetter::TYPE_INPUT],
+                ['IS', 'letter_type', null],
+            ])->all(), 'id', 'title'),
+            'OutputFlow' => ArrayHelper::map(AuWorkFlow::find()->andWhere([
+                'OR',
+                ['=', 'letter_type', AuLetter::TYPE_OUTPUT],
+                ['IS', 'letter_type', null],
+            ])->all(), 'id', 'title'),
+        ];
+
+        return isset($code) ? ($items[$type][$code] ?? false) : $items[$type] ?? false;
     }
 
     public function behaviors()
@@ -193,7 +219,7 @@ class AuWorkFlowBase extends \yii\db\ActiveRecord
                 'ownerClassName' => self::class,
                 'fieldAdditional' => 'additional_data',
                 'AdditionalDataProperty' => [
-                    'users' => 'IntegerArray',
+                    'steps' => 'ClassArray::' . AuWorkFlowStep::class,
                 ],
             ],
             'softDeleteBehavior' => [

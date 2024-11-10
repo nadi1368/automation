@@ -2,6 +2,7 @@
 
 use common\models\Order;
 use hesabro\automation\models\AuLetterUser;
+use hesabro\automation\models\AuWorkFlowStep;
 use hesabro\automation\models\WorkFlowJsonData;
 
 /* @var $this yii\web\View */
@@ -26,7 +27,7 @@ $countItems=count($items);
 
         <div class="col bs-wizard-step <?= $status_class ?>">
             <div class="text-center bs-wizard-stepnum">
-                <?= $workFlowUser->title . ' (' . \hesabro\automation\models\AuWorkFlow::itemAlias('OperationType', $workFlowUser->operation_type) . ')' ?>
+                <?= $workFlowUser->title . ' (' . AuWorkFlowStep::itemAlias('OperationType', $workFlowUser->operation_type) . ')' ?>
             </div>
             <?php if($countItems>1): ?>
             <div class="progress">

@@ -2,6 +2,7 @@
 
 use hesabro\automation\models\AuLetter;
 use hesabro\automation\models\AuUser;
+use hesabro\automation\models\AuWorkFlow;
 use hesabro\automation\Module;
 use kartik\select2\Select2;
 use yii\helpers\ArrayHelper;
@@ -26,8 +27,11 @@ $userClass = Module::getInstance()->user;
     <?php $form = ActiveForm::begin(); ?>
     <div class="card-body">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+            </div>
+            <div class="col-md-3">
+                <?= $form->field($model, 'workflow_id_value')->dropdownList(AuWorkFlow::itemAlias('InputFlow'), ['prompt'=>Module::t('module','Select')]) ?>
             </div>
             <div class="col-md-3">
                 <?php Pjax::begin(['id' => 'p-jax-au-form']) ?>

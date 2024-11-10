@@ -1,9 +1,9 @@
 <?php
 
-use hesabro\automation\PrintLetterAsset;
+use hesabro\automation\bundles\PrintLetterAsset;
+use hesabro\helpers\CKEditorFontAsset;
 use yii\helpers\Html;
 use yii\web\View;
-use hesabro\helpers\CKEditorFontAsset;
 
 /* @var $this View */
 /* @var $content string */

@@ -19,7 +19,7 @@ class AuWorkFlowSearch extends AuWorkFlow
     public function rules()
     {
         return [
-            [['id', 'letter_type', 'order_by', 'operation_type', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'slave_id'], 'integer'],
+            [['id', 'letter_type', 'status', 'created_at', 'created_by', 'updated_at', 'updated_by', 'deleted_at', 'slave_id'], 'integer'],
             [['title', 'additional_data'], 'safe'],
         ];
     }
@@ -62,8 +62,6 @@ class AuWorkFlowSearch extends AuWorkFlow
         $query->andFilterWhere([
             'id' => $this->id,
             'letter_type' => $this->letter_type,
-            'order_by' => $this->order_by,
-            'operation_type' => $this->operation_type,
             'status' => $this->status,
             'created_at' => $this->created_at,
             'created_by' => $this->created_by,
