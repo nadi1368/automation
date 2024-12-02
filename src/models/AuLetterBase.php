@@ -3,6 +3,8 @@
 namespace hesabro\automation\models;
 
 use hesabro\automation\Module;
+use hesabro\notif\behaviors\NotifBehavior;
+use hesabro\notif\interfaces\NotifInterface;
 use Yii;
 use hesabro\changelog\behaviors\LogBehavior;
 use hesabro\errorlog\behaviors\TraceBehavior;
@@ -11,6 +13,7 @@ use yii\behaviors\BlameableBehavior;
 use hesabro\helpers\behaviors\JsonAdditional;
 use Exception;
 use GuzzleHttp\Client as GuzzleHttpClient;
+use yii\db\ActiveRecord;
 use yii\helpers\Html;
 use yii\helpers\HtmlPurifier;
 use yii2tech\ar\softdelete\SoftDeleteBehavior;
@@ -58,7 +61,7 @@ use yii2tech\ar\softdelete\SoftDeleteBehavior;
  * @property int|null $workflow_id
  * @property int|null $workflow_id_value
  */
-class AuLetterBase extends \yii\db\ActiveRecord
+class AuLetterBase extends ActiveRecord implements NotifInterface
 {
     const STATUS_DELETED = 0;
     const STATUS_DRAFT = 1; // پیش نویش
@@ -89,6 +92,14 @@ class AuLetterBase extends \yii\db\ActiveRecord
     const SCENARIO_CONFIRM_AND_START_WORK_FLOW = 'confirm_and_start_work_flow';
     const SCENARIO_CREATE_RECORD = 'create_record';
     const SCENARIO_CONFIRM_AND_NEXT_STEP = 'confirm_and_next_step';
+
+    const NOTIF_AU_LETTER_CONFIRM_AND_START_WORK_FLOW = 'notif_au_letter_confirm_and_start_work_flow';
+
+    const NOTIF_AU_LETTER_CONFIRM_AND_NEXT_STEP = 'notif_au_letter_confirm_and_next_step';
+
+    const NOTIF_AU_LETTER_CONFIRM_AND_END_STEPS = 'notif_au_letter_confirm_and_end_steps';
+
+    const NOTIF_AU_LETTER_RECEIVE_INPUT = 'notif_au_letter_receive_input';
 
     public $error_msg = '';
     public $recipients; // گیرندگان
@@ -996,6 +1007,12 @@ class AuLetterBase extends \yii\db\ActiveRecord
                 0 => 'fa fa-envelope',
                 1 => 'fa fa-envelope-open',
             ],
+            'Notif' => [
+                self::NOTIF_AU_LETTER_CONFIRM_AND_START_WORK_FLOW => 'تایید و شروع گردش کار',
+                self::NOTIF_AU_LETTER_CONFIRM_AND_NEXT_STEP => 'تایید و ادامه گردش کار',
+                self::NOTIF_AU_LETTER_CONFIRM_AND_END_STEPS => 'تایید و اتمام گردش کار',
+                self::NOTIF_AU_LETTER_RECEIVE_INPUT => 'نامه های وارده بین سیستمی'
+            ],
         ];
         if (isset($code))
             return isset($_items[$type][$code]) ? $_items[$type][$code] : false;
@@ -1058,6 +1075,105 @@ class AuLetterBase extends \yii\db\ActiveRecord
                 },
                 'invokeDeleteEvents' => true
             ],
+            [
+                'class' => NotifBehavior::class,
+                'event' => self::NOTIF_AU_LETTER_CONFIRM_AND_START_WORK_FLOW,
+                'scenario' => [self::SCENARIO_CONFIRM_AND_START_WORK_FLOW],
+            ],
+            [
+                'class' => NotifBehavior::class,
+                'event' => self::NOTIF_AU_LETTER_CONFIRM_AND_NEXT_STEP,
+                'scenario' => [self::SCENARIO_CONFIRM_AND_NEXT_STEP],
+            ],
+            [
+                'class' => NotifBehavior::class,
+                'event' => self::NOTIF_AU_LETTER_CONFIRM_AND_END_STEPS,
+                'scenario' => [self::SCENARIO_CONFIRM_AND_NEXT_STEP],
+            ],
+            [
+                'class' => NotifBehavior::class,
+                'event' => self::NOTIF_AU_LETTER_RECEIVE_INPUT,
+                'scenario' => [self::SCENARIO_RECEIVE_INPUT],
+            ]
         ];
+    }
+
+    public function notifUsers(string $event): array
+    {
+        $users = [];
+        if (in_array($this->getScenario(), [self::SCENARIO_CONFIRM_AND_RECEIVE_INPUT, self::SCENARIO_CONFIRM_AND_SEND_INTERNAL])) {
+            foreach ($this->recipientUser as $auLetterUser) {
+                $users[] = $auLetterUser->user_id;
+            }
+        }
+        if (in_array($this->getScenario(), [self::SCENARIO_CONFIRM_AND_START_WORK_FLOW, self::SCENARIO_CONFIRM_AND_NEXT_STEP])) {
+            foreach ($this->getWorkFlowUser()->byStep($this->current_step)->all() as $auLetterUser) {
+                /** @var AuLetterUser $auLetterUser */
+                $users[] = $auLetterUser->user_id;
+            }
+        }
+        return $users;
+    }
+
+    public function notifTitle(string $event): string
+    {
+        return self::itemAlias('Notif', $event);
+    }
+
+    public function notifLink(string $event): ?string
+    {
+        return Yii::$app->urlManager->createAbsoluteUrl(['/automation/' . AuLetterBase::itemAlias('TypeControllers', $this->type) . '/view', 'id' => $this->id]);
+    }
+
+    public function notifDescription(string $event): ?string
+    {
+        $content = '';
+        if (in_array($this->getScenario(), [self::SCENARIO_CONFIRM_AND_RECEIVE_INPUT, self::SCENARIO_CONFIRM_AND_SEND_INTERNAL])) {
+            $content = Html::tag('p', "یک نامه در سیستم ثبت شده است.");
+            if ($this->update !== null) {
+                $content .= Html::tag('p', 'این نامه توسط "' . $this->update?->fullName . '" در سیستم ثبت شد.');
+            }
+            $content .= Html::tag('p', 'عنوان نامه : "' . $this->title . '"');
+        }
+        if (in_array($this->getScenario(), [self::SCENARIO_RECEIVE_INPUT])) {
+            $content = Html::tag('p', "یک نامه در سیستم ثبت شده است.");
+            $content .= Html::tag('p', 'این نامه توسط "' . $this->showSender() . '" در سیستم ثبت شد.');
+            $content .= Html::tag('p', 'عنوان نامه : "' . $this->title . '"');
+        }
+        if (in_array($this->getScenario(), [self::SCENARIO_CONFIRM_AND_START_WORK_FLOW, self::SCENARIO_CONFIRM_AND_NEXT_STEP])) {
+            $content = Html::tag('p', "یک نامه در سیستم ثبت شده است.");
+            $content .= Html::tag('p', 'این نامه توسط "' . $this->update?->fullName . '" در سیستم ثبت شد.');
+            $content .= Html::tag('p', 'عنوان نامه : "' . $this->title . '"');
+        }
+        return $content;
+    }
+
+    public function notifConditionToSend(string $event): bool
+    {
+        if ($event === self::NOTIF_AU_LETTER_CONFIRM_AND_END_STEPS && $this->current_step < $this->total_step) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function notifSmsConditionToSend(string $event): bool
+    {
+        return true;
+    }
+
+    public function notifSmsDelayToSend(string $event): ?int
+    {
+        return 0;
+    }
+
+    public function notifEmailConditionToSend(string $event): bool
+    {
+        return true;
+    }
+
+    public function notifEmailDelayToSend(string $event): ?int
+    {
+        return 0;
     }
 }
