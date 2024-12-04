@@ -121,7 +121,12 @@ class AutomationMenuItems
                     ],
                 ]
             ],
-
+            [
+                'label' => Module::t('module', 'Notification Settings'),
+                'icon' => 'far fa-bell',
+                'url' => ["/$moduleId/notif-listener/index"],
+                'group' => 'AutomationNotif',
+            ],
         ];
     }
 }

@@ -86,5 +86,6 @@ return [
     'All Persons' => 'همه اشخاص',
     'Only One Person' => 'تنها یکی از اشخاص',
     'Invalid Value' => 'مقدار نامعتبر',
-    'All' => 'همه'
+    'All' => 'همه',
+    'Notification Settings' => 'تنظیمات اطلاع‌رسانی',
 ];
