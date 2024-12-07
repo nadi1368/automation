@@ -1120,7 +1120,7 @@ class AuLetterBase extends ActiveRecord implements NotifInterface
         return self::itemAlias('Notif', $event);
     }
 
-    public function notifLink(string $event): ?string
+    public function notifLink(string $event, ?int $userId): ?string
     {
         return Yii::$app->urlManager->createAbsoluteUrl(['/automation/' . AuLetterBase::itemAlias('TypeControllers', $this->type) . '/view', 'id' => $this->id]);
     }
